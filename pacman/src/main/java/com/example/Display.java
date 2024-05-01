@@ -2,6 +2,8 @@ package com.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Group; //Gruppe
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -17,19 +19,25 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent; //Keyboard input
 import javafx.scene.paint.Color; //Baggrund farve
 
-public class Display extends GridPane{
+public class Display {
     Game game;
-
     int factor = 20;
 
-    // midlertidige
-    
+    Canvas canvas;
+    GraphicsContext gc;
+
+    Circle pellet;
 
     public Display(Game game){
         this.game = game;
+        this.canvas = new Canvas(600,500);
+        this.gc = canvas.getGraphicsContext2D();
+
+
         addWalls();
     }
 
@@ -39,39 +47,47 @@ public class Display extends GridPane{
         for (int y = 0; y < grid.getMap().length; y++){
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.wall){
-                    Rectangle wall = new Rectangle();
-                    wall.setFill(Color.BLUE);
-                    wall.setHeight(factor);
-                    wall.setWidth(factor);
-                    add(wall, x,y);
+                    gc.setFill(Color.BLUE);
+                    gc.fillRect(x*factor,y*factor,factor,factor);
+                    // Rectangle wall = new Rectangle(x*factor, y*factor, factor, factor);
+                    // wall.setFill(Color.BLUE);
+                    //wall.setHeight(factor);
+                    //wall.setWidth(factor);
                 }
             }
         }
     }
 
     public void update() {
-        Grid grid = game.getGrid();
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0,0,600,500);
+        updatePellets();
+        addWalls();
+
         Character[] characters = game.getCharacters();
+        gc.setFill(Color.YELLOW);
+        gc.fillRect(characters[0].getPosX()*factor,characters[0].getPosY()*factor,factor,factor);
+        
+        //add(player, characters[0].getPosX(), characters[0].getPosY());
+        
+    }
 
-        Rectangle player = new Rectangle();
-
+    private void updatePellets() {
+        Grid grid = game.getGrid();
         for (int y = 0; y < grid.getMap().length; y++){
             for (int x = 0; x < grid.getMap()[0].length; x++){
-                
-                
                 if (grid.getEntity(x, y) == Entity.pellet){
-                    Rectangle pellet = new Rectangle();
-                    pellet.setFill(Color.WHITE);
-                    pellet.setHeight(factor/2);
-                    pellet.setWidth(factor);
-                    add(pellet, x,y);
+                    gc.setFill(Color.WHITE);
+                    gc.fillRect(x*factor+factor/2-factor/6/2,y*factor+factor/2-factor/6/2,factor/6,factor/6);
+                    //pellet.setRadius(factor/8);
+                    
                 }
             }
         }
     }
 
-    private void updatePellets() {
-        
+    public Canvas getCanvas() {
+        return this.canvas;
     }
 
     private void updatePlayer() {

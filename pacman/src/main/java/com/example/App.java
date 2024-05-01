@@ -12,6 +12,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent; //Keyboard input
 import javafx.scene.paint.Color; //Baggrund farve
 
+import javafx.scene.Node;
+import javafx.scene.Parent;
+
+
 
 /**
  * JavaFX App
@@ -20,28 +24,23 @@ public class App extends Application {
     public Group root;
     private static Stage stage;
     GameController gameController = new GameController();
+    Display display;
 
     @Override
     public void start(Stage stage) {
         /*GridPane*/
         root = new Group();
-
-        Scene scene = new Scene(gameController.getDisplay(), 600, 500, Color.BLACK);
+        display = gameController.getDisplay();
+        root.getChildren().add(display.getCanvas());
+        Scene scene = new Scene(root, 600, 500, Color.BLACK);
+        
 
         stage.setScene(scene);
         stage.setTitle("Pacman");
-
-        //System.out.println("Starter");
-        //gameController.setStage(stage);
-        //GameController.setRoot(root);
-        //gameController.showDisplay();
-        /*Display display = new Display(stage, root);
-        display.display("test");*/
+        
         stage.show();
-    }
 
-    public static Stage getStage(){
-        return stage;
+        scene.setOnKeyPressed(gameController::handleKeyPress);
     }
 
     public static void main(String[] args) {

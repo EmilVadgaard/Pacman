@@ -12,7 +12,7 @@ public class Game {
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
-        this.player = new Player(15, 15, 3);
+        this.player = new Player(13, 18, 3);
     }
 
     public void moveCharacter(Character character){
@@ -36,6 +36,10 @@ public class Game {
 
     public void switchDirection(Character character, Direction desiredDirection){
         character.switchDirection(desiredDirection);
+    }
+
+    public Direction getCharacterDirection(Character character){
+        return character.getDirection();
     }
 
     public Grid getGrid() {
