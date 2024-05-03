@@ -43,7 +43,6 @@ public class Display {
         this.game = game;
         this.canvas = new Canvas(600,650);
         this.gc = canvas.getGraphicsContext2D();
-        createScore(scoreboard); //DEN HER VIRKER IKKE FOR EN ELLER ANDEN GRUND???
         
         addWalls();
         createScore(scoreboard);
