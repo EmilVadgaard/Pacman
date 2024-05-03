@@ -48,7 +48,7 @@ public class Display {
         createScore(scoreboard); //DEN HER VIRKER IKKE FOR EN ELLER ANDEN GRUND???
         
         addWalls();
-        creatScore(scoreboard);
+        createScore(scoreboard);
     }
 
     private void addWalls(){
