@@ -48,7 +48,7 @@ public class Display {
         createScore(scoreboard); //DEN HER VIRKER IKKE FOR EN ELLER ANDEN GRUND???
         
         addWalls();
-
+        creatScore(scoreboard);
     }
 
     private void addWalls(){
@@ -69,8 +69,9 @@ public class Display {
     }
 
     public void update() {
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0,0,600,650);
+        //gc.setFill(Color.BLACK);
+        //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.
+        gc.clearRect(gameOffsetx, gameOffsety, 28*factor, 28*factor);
         updatePellets();
         addWalls();
         Character[] characters = game.getCharacters();
