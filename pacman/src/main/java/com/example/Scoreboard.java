@@ -15,11 +15,11 @@ public class Scoreboard {
         return score;
     }
 
-    public void setLifeCounter(int lives){
-        this.lifeCounter = lives;
+    public void subtractLifeCounter(int n){
+        lifeCounter = lifeCounter - n;
     }
     
-    public void setScore(int score){
-        this.score = score;
+    public void addScore(int n){
+        score = score - n;
     }
 }

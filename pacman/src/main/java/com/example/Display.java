@@ -35,8 +35,6 @@ public class Display {
     GraphicsContext gc;
 
     private Scoreboard scoreboard = new Scoreboard();
-    private String scoreboardText;
-    private String lifeCounterText;
     private int testCounter = 0; //FJERN DEN HER SENERE. DET BARE TEST FOR SCOREBOARD
 
     Circle pellet;
@@ -77,7 +75,6 @@ public class Display {
         Character[] characters = game.getCharacters();
         gc.setFill(Color.YELLOW);
         gc.fillRect(characters[0].getPosX()*factor+gameOffsetx,characters[0].getPosY()*factor+gameOffsety,factor,factor);
-        createScore(scoreboard);
         //add(player, characters[0].getPosX(), characters[0].getPosY());
         updateScore(scoreboard);
     }
@@ -109,16 +106,12 @@ public class Display {
     }
 
     private void createScore(Scoreboard scoreboard) {
-        scoreboardText = "Score:\n0";
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial Black", 20));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(scoreboardText, 300, 60);
-        scoreboard.setScore(0);
+        gc.fillText("Score:\n0", 300, 60);
 
-        lifeCounterText = "Lives:";
-        gc.fillText(lifeCounterText, 70, 60);
-        scoreboard.setLifeCounter(3);
+        gc.fillText("Lives: ", 70, 60);
 
         gc.setFill(Color.YELLOW);
         gc.fillRect(40,70,factor/1.25,factor/1.25);
@@ -128,10 +121,9 @@ public class Display {
 
     private void updateScore(Scoreboard Scoreboard) {
         testCounter++;
-        scoreboardText = ("Score:\n" + testCounter);
         gc.clearRect(250, 30, 100, 60);
         gc.setFill(Color.WHITE);
-        gc.fillText(scoreboardText, 300, 60);
+        gc.fillText("Score:\n" + testCounter, 300, 60);
         
         switch(Scoreboard.getLifeCounter()){
             case 3:
