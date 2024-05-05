@@ -1,0 +1,201 @@
+@startuml Time
+
+enum Direction {
+    north
+    south
+    east
+    west
+}
+
+enum Entity {
+    wall
+    empty
+    pellet
+    powerPellet
+}
+
+class App {
+    + main()
+    + start(stage: Stage)
+}
+
+class GameController {
+    - desiredDirection: Direction
+    + run()
+    + getDisplay(): Display
+    + handleKeyPress(key: KeyEvent)
+}
+
+class Game {
+    - grid: Grid
+    - player: Player
+    - lifeCounter: int
+    - score: int
+
+    + Game(filepath: String): Game
+    + moveCharacter(character: Character)
+    + isLegal(character: Character, direction: Direction): boolean
+    + switchDirection(character: Character, direction: Direction)
+    + getCharacterDirection(character: Character): Direction
+    + getGrid(): Grid
+    + getCharacters(): Character[]
+    - addScore(score: int)
+    - subtractLife() 
+    + getLives(): int
+    + getScore(): int
+    + changeState(state: GameState)
+    - wallInFront(posX: int, posY: int): boolean
+    - characterCollision(playerX: int, playerY: int, ghostX: int, ghostY: int, ghostState: int): boolean
+    - entityCollision(playerX: int, playerY: int)
+}
+
+class Search {
+    {static} + findDirection(ghostX: int, ghostY: playerX: int, playerY: int, goal: Goal, grid: Grid)
+    {static} - breadthFirst(startX: int, start:Y, playerX, playerY, goalX: int, goalY: int, grid: Grid)
+}
+
+class Timer {
+    - currentTime: int
+    - maxTime: int
+
+    + Timer(time: int): Timer
+    + decrementTime()
+    + getTime(): int
+    + setTime(time: int)
+    + reset()
+}
+
+class Display {
+    - game: Game
+    - factor: int
+    - canvas: Canvas
+    - gc: GraphicsContext
+    - pellet: Circle
+    - gameOffSetX: int
+    - gameOffSetY: int
+
+    + Display(game: Game): Display
+    + update()
+    - addWalls()
+    - updatePellets()
+    - updatePlayer()
+    - updateGhosts()
+    + getCanvas(): Canvas
+    - createScore()
+    - updateScore()
+}
+
+class Collections {
+    spriteSheet: AnimationGroup
+    getSprite(): Sprite
+}
+
+class AnimationGroup {
+
+}
+
+class Animation {
+
+}
+
+class Sprite {
+
+}
+
+interface GameState {
+    + canMove(): boolean
+
+}
+
+class NormalState {
+    + canMove(): boolean
+}
+
+class PowerState {
+    + canMove(): boolean
+}
+
+class DeathState {
+    + canMove(): boolean
+}
+
+abstract class Character{
+    # speed: int
+    # posX: int
+    # posY: int
+    # currentDirection: Direction
+
+    + move ()
+    + switchDirection(direction: Direction)
+    + getPosX(): int
+    + getPosY(): int
+    + getDirection(): Direction
+}
+class Player {
+    + Player(posX: int, posY: int, speed: int): Player
+    + move()
+}
+class Ghost {
+    - state: State
+    + ChangeState(state: GhostState)
+    + move()
+    + returnState(): int
+}
+
+interface GhostState {
+    + returnState()
+}
+class ScaredState {
+    + returnState(): int
+}
+class ChaseState {
+    + returnState(): int
+}
+class DeadState {
+    + returnState(): int
+}
+
+
+class Grid {
+    # map: Entity [][]
+
+    + Grid(blueprint: File): Grid
+    - build(blueprint: File): Entity[][]
+    - dimension(blueprint: File): int[]
+    - fileToCharMatrix(blueprint: File): char[][]
+    + getMap(): Entity[][]
+    + getEntity(x: int y: int): Entity
+}
+
+App --> GameController
+
+GameController --> Timer
+GameController --> Game
+GameController --> Display
+
+Display --> Game
+Display --> Collections
+
+Collections --> AnimationGroup
+
+AnimationGroup +-- Sprite
+AnimationGroup +-- Animation
+
+Game --> Character
+Game --> GameState
+Game --> Grid
+Game --> Search
+
+Player ..|> Character
+Ghost ..|> Character
+
+Ghost --> GhostState
+ChaseState ..|> GhostState
+ScaredState ..|> GhostState
+DeadState ..|> GhostState
+
+NormalState ..|> GameState
+PowerState ..|> GameState
+DeathState ..|> GameState
+
+@enduml
