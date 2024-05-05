@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Grid {
-    Entity[][] map;
+    private Entity[][] map;
 
     public Grid(File blueprint) {
         try {
@@ -25,13 +25,19 @@ public class Grid {
             for (int x = 0; x < charMatrix[0].length; x++) {
                 switch(charMatrix[y][x]) {
                     case 'W':
+                        Entity wallType = calculateWallType(x, y, charMatrix);
                         map[y][x] = Entity.wall;
                         break;
                     case 'E':
                         map[y][x] = Entity.empty;
                         break;
                     case 'P':
+                        map[y][x] = Entity.bigPellet;
+                        break;
+                    case 'p':
                         map[y][x] = Entity.pellet;
+                        break;
+                    default:
                         break;
                 }
             }
@@ -79,8 +85,35 @@ public class Grid {
         return charMap;
     }
 
+    private Entity calculateWallType(int x, int y, char[][] charMatrix) {
+        int wallType = 0;
+        int multiplier = 1;
+        System.out.println(charMatrix.length + " - y length, " + charMatrix[0].length + "- x length");
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (y+i >= 0 && y+i < charMatrix.length && x+j >= 0 && x+j < charMatrix[0].length) {
+                    if (charMatrix[y+i][x+j] == 'W') {
+                        wallType += multiplier;
+                    }
+                    if (charMatrix[y+i][x+j] == 'O') {
+                        // to-do: Add outside spaces to map.txt
+                    }
+                }
+                multiplier *= 2;
+            }
+        }
+        switch(wallType) {
+            default:
+                return Entity.wall;
+        }
+    }
+
     public Entity[][] getMap() {
         return this.map;
+    }
+
+    public void setEntity(int x, int y, Entity entity) {
+        map[y][x] = Entity.empty;
     }
 
     public Entity getEntity(int x, int y) {

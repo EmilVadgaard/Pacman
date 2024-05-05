@@ -38,4 +38,8 @@ public abstract class Character {
     public int getPosY() {
         return this.posY;
     }
+
+    public int getSpeed() {
+        return this.speed;
+    }
 }

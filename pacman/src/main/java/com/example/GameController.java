@@ -39,6 +39,10 @@ public class GameController {
                     }
                     if (game.isLegal(game.getCharacters()[0], game.getCharacterDirection(game.getCharacters()[0]))) {
                         game.moveCharacter(game.getCharacters()[0]);
+                        // conditional collision checks after player moves (pellets now, ghosts later)
+                        if (game.isEatable(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY())) {
+                            game.eat(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY());
+                        }
                     }
                     playerMoveTimer.reset();
                 }
