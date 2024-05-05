@@ -10,6 +10,7 @@ public class GameController {
 
     private Direction desiredDirection;
     
+    Timer playerMoveTimer = new Timer(15);
     
 
     public GameController() {
@@ -20,14 +21,18 @@ public class GameController {
     }
 
     public void run(){
-        Timer playerMoveTimer = new Timer(15);
+        //Timer playerMoveTimer = new Timer(15);
+        Timer playerAnimationTimer = new Timer(5);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
+        timers.add(playerAnimationTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 for (Timer t : timers) {
                     t.decrementTime();
                 }
+                display.setOffest(playerMoveTimer.getTime());
+
                 if (playerMoveTimer.getTime() == 0) {
                     if (game.isLegal(game.getCharacters()[0], desiredDirection)) {
                         game.switchDirection(game.getCharacters()[0], desiredDirection);
@@ -36,6 +41,10 @@ public class GameController {
                         game.moveCharacter(game.getCharacters()[0]);
                     }
                     playerMoveTimer.reset();
+                }
+                if (playerAnimationTimer.getTime() == 0) {
+                    display.incrementPlayerFrame();
+                    playerAnimationTimer.reset();
                 }
                 display.update();
             }
@@ -50,15 +59,27 @@ public class GameController {
         switch(event.getCode()){
             case UP:
                 this.desiredDirection = Direction.north;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }
                 break;
             case DOWN:
                 this.desiredDirection = Direction.south;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }                
                 break;
             case RIGHT:
                 this.desiredDirection = Direction.east;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }                
                 break;
             case LEFT:
                 this.desiredDirection = Direction.west;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }
                 break;
             default:
                 break;

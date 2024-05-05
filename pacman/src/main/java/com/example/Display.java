@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group; //Gruppe
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
@@ -24,6 +25,11 @@ import javafx.scene.input.KeyEvent; //Keyboard input
 import javafx.scene.paint.Color; //Baggrund farve
 
 public class Display {
+    Image sheet = new Image(getClass().getResource("/sprite-sheet.png").toString());
+    Collections collection = new Collections(sheet);
+    int playerFrame = 0;
+    int offset = 0;
+
     Game game;
     int factor = 20;
 
@@ -47,12 +53,10 @@ public class Display {
         for (int y = 0; y < grid.getMap().length; y++){
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.wall){
-                    gc.setFill(Color.BLUE);
-                    gc.fillRect(x*factor,y*factor,factor,factor);
-                    // Rectangle wall = new Rectangle(x*factor, y*factor, factor, factor);
-                    // wall.setFill(Color.BLUE);
-                    //wall.setHeight(factor);
-                    //wall.setWidth(factor);
+                    // gc.setFill(Color.BLUE);
+                    // gc.fillRect(x*factor,y*factor,factor,factor);
+                    
+                    collection.getEntitySprite(gc, "walls", 0, x,y, factor);
                 }
             }
         }
@@ -65,11 +69,7 @@ public class Display {
         addWalls();
 
         Character[] characters = game.getCharacters();
-        gc.setFill(Color.YELLOW);
-        gc.fillRect(characters[0].getPosX()*factor,characters[0].getPosY()*factor,factor,factor);
-        
-        //add(player, characters[0].getPosX(), characters[0].getPosY());
-        
+        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX(),characters[0].getPosY(), factor, offset);
     }
 
     private void updatePellets() {
@@ -77,13 +77,21 @@ public class Display {
         for (int y = 0; y < grid.getMap().length; y++){
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.pellet){
-                    gc.setFill(Color.WHITE);
-                    gc.fillRect(x*factor+factor/2-factor/6/2,y*factor+factor/2-factor/6/2,factor/6,factor/6);
-                    //pellet.setRadius(factor/8);
-                    
+                    collection.getEntitySprite(gc, "pellet", 0, x,y, factor);
                 }
             }
         }
+    }
+
+    public void incrementPlayerFrame(){
+        playerFrame++;
+        if (playerFrame == 4){
+            playerFrame = 0;
+        }
+    }
+
+    public void setOffest(int playerTime){
+        this.offset = ((15 - playerTime)/15)*20;
     }
 
     public Canvas getCanvas() {
