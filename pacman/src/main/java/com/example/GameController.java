@@ -1,25 +1,51 @@
 package com.example;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.layout.GridPane;
-import javafx.scene.Group;
-import javafx.stage.Stage;
+import javafx.scene.input.KeyEvent;
+import java.util.ArrayList;
 
 public class GameController {
     private final Display display;
     private final Game game;
+
+    private Direction desiredDirection;
     
+    Timer playerMoveTimer = new Timer(15);
     
 
     public GameController() {
         this.game = new Game("map.txt");
         this.display = new Display(this.game);
+        this.desiredDirection = Direction.north;
         run();
     }
 
     public void run(){
+        //Timer playerMoveTimer = new Timer(15);
+        Timer playerAnimationTimer = new Timer(5);
+        ArrayList<Timer> timers = new ArrayList<Timer>();
+        timers.add(playerMoveTimer);
+        timers.add(playerAnimationTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
+                for (Timer t : timers) {
+                    t.decrementTime();
+                }
+                display.setOffest(playerMoveTimer.getTime());
+
+                if (playerMoveTimer.getTime() == 0) {
+                    if (game.isLegal(game.getCharacters()[0], desiredDirection)) {
+                        game.switchDirection(game.getCharacters()[0], desiredDirection);
+                    }
+                    if (game.isLegal(game.getCharacters()[0], game.getCharacterDirection(game.getCharacters()[0]))) {
+                        game.moveCharacter(game.getCharacters()[0]);
+                    }
+                    playerMoveTimer.reset();
+                }
+                if (playerAnimationTimer.getTime() == 0) {
+                    display.incrementPlayerFrame();
+                    playerAnimationTimer.reset();
+                }
                 display.update();
             }
         }.start();
@@ -28,22 +54,37 @@ public class GameController {
     public Display getDisplay() {
         return this.display;
     }
-    
 
-
-    /*
-    public void setStage(Stage stage){
-        display.setStage(stage);
+    public void handleKeyPress(KeyEvent event) {
+        switch(event.getCode()){
+            case UP:
+                this.desiredDirection = Direction.north;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }
+                break;
+            case DOWN:
+                this.desiredDirection = Direction.south;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }                
+                break;
+            case RIGHT:
+                this.desiredDirection = Direction.east;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }                
+                break;
+            case LEFT:
+                this.desiredDirection = Direction.west;
+                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                //     playerMoveTimer.reset();
+                // }
+                break;
+            default:
+                break;
+        }
     }
-
-    public void setRoot(Group root){
-        display.setRoot(root);
-    }
-
-    public void showDisplay(){
-        display.display("test");
-    }
-    */
     
     
 }

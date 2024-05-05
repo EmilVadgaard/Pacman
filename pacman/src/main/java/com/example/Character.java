@@ -27,6 +27,10 @@ public abstract class Character {
         this.currentDirection = desiredDirection;
     }
 
+    public Direction getDirection(){
+        return this.currentDirection;
+    }
+
     public int getPosX() {
         return this.posX;
     }
