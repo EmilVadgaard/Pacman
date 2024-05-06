@@ -1,28 +1,12 @@
 package com.example;
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.Group; //Gruppe
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.text.Font;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent; //Keyboard input
 import javafx.scene.paint.Color; //Baggrund farve
 
 public class Display {
@@ -32,26 +16,28 @@ public class Display {
     int offset = 0;
 
     Game game;
-    int factor = 20;
+    int factor = 15;
     
-    int gameOffsetx = 20;
-    int gameOffsety = 110;
+    int gameOffsetx = 0;
+    int gameOffsety = 7;
+
+    Scoreboard scoreboard;
 
     Canvas canvas;
     GraphicsContext gc;
 
-    private Scoreboard scoreboard = new Scoreboard();
     private int testCounter = 0; //FJERN DEN HER SENERE. DET BARE TEST FOR SCOREBOARD
 
     Circle pellet;
 
-    public Display(Game game){
+    public Display(Game game, Scoreboard scoreboard){
         this.game = game;
         this.canvas = new Canvas(600,650);
         this.gc = canvas.getGraphicsContext2D();
-        
+        this.scoreboard = scoreboard;
+    
         addWalls();
-        createScore(scoreboard);
+        createScore();
     }
 
     private void addWalls(){
@@ -64,7 +50,7 @@ public class Display {
                     // gc.setFill(Color.BLUE);
                     // gc.fillRect(x*factor,y*factor,factor,factor);
                     
-                    collection.getEntitySprite(gc, "walls", 0, x,y, factor);
+                    collection.getEntitySprite(gc, "walls", 0, x+gameOffsetx,y+gameOffsety, factor);
 
                 }
             }
@@ -74,12 +60,13 @@ public class Display {
     public void update() {
         //gc.setFill(Color.BLACK);
         //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.
-        gc.clearRect(gameOffsetx, gameOffsety, 28*factor, 28*factor);
+        gc.clearRect(gameOffsetx, gameOffsety, 50*factor, 50*factor);
         updatePellets();
         addWalls();
+        updateScore();
         Character[] characters = game.getCharacters();
 
-        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX(),characters[0].getPosY(), factor, offset);
+        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX()+gameOffsetx,characters[0].getPosY()+gameOffsety, factor, offset);
 
     }
 
@@ -89,7 +76,7 @@ public class Display {
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.pellet){
 
-                    collection.getEntitySprite(gc, "pellet", 0, x,y, factor);
+                    collection.getEntitySprite(gc, "pellet", 0, x+gameOffsetx,y+gameOffsety, factor);
 
                 }
             }
@@ -103,7 +90,7 @@ public class Display {
         }
     }
 
-    public void setOffest(int playerTime){
+    public void setOffset(int playerTime){
         this.offset = ((15 - playerTime)/15)*20;
     }
 
@@ -119,7 +106,7 @@ public class Display {
         
     }
 
-    private void createScore(Scoreboard scoreboard) {
+    private void createScore() {
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial Black", 20));
         gc.setTextAlign(TextAlignment.CENTER);
@@ -133,13 +120,12 @@ public class Display {
         gc.fillRect(84,70,factor/1.25,factor/1.25);
     }
 
-    private void updateScore(Scoreboard Scoreboard) {
-        testCounter++;
+    private void updateScore() {
         gc.clearRect(250, 30, 100, 60);
         gc.setFill(Color.WHITE);
-        gc.fillText("Score:\n" + testCounter, 300, 60);
+        gc.fillText("Score:\n" + scoreboard.getScore(), 300, 60);
         
-        switch(Scoreboard.getLifeCounter()){
+        switch(scoreboard.getLifeCounter()){
             case 3:
                 break;
             case 2:

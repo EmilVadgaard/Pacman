@@ -39,6 +39,11 @@ public abstract class Character {
         return this.posY;
     }
 
+    public void setPos(int x, int y) {
+        this.posX = x;
+        this.posY = y;
+    }
+
     public int getSpeed() {
         return this.speed;
     }

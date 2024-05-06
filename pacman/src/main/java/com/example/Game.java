@@ -6,20 +6,31 @@ import java.io.File;
 public class Game {
     Grid grid;
     Player player;
-    
+    Scoreboard scoreboard;
 
     public Game(String filepath) {
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(14, 23, 8);
+        this.scoreboard = new Scoreboard();
     }
 
     public void moveCharacter(Character character){
         /**
          * Moves a given character.
          */
-        character.move();
+        if (character.getPosX() == grid.getLengthX() - 1 && character.getDirection() == Direction.east) {
+            character.setPos(0, character.getPosY());
+        } else if (character.getPosX() == 0 && character.getDirection() == Direction.west) {
+            character.setPos(grid.getLengthX() - 1, character.getPosY());
+        } else if (character.getPosY() == 0 && character.getDirection() == Direction.north) {
+            character.setPos(character.getPosX(), grid.getLengthY() - 1);
+        } else if (character.getPosY() == grid.getLengthY() - 1 && character.getDirection() == Direction.south) {
+            character.setPos(character.getPosX(), 0);
+        } else {
+            character.move();
+        }
     }
 
     public boolean isLegal(Character character, Direction direction) {
@@ -28,13 +39,29 @@ public class Game {
          */
         switch(direction) {
             case north:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() - 1));
+                if (character.getPosY() == 0) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() - 1));
+                }
             case west:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() - 1, character.getPosY()));
+                if (character.getPosX() == 0) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() - 1, character.getPosY()));
+                }
             case east:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() + 1, character.getPosY()));
+                if (character.getPosX() == grid.getLengthX() - 1) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() + 1, character.getPosY()));
+                }
             case south:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() + 1));
+                if (character.getPosY() == grid.getLengthY() - 1) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() + 1));
+                }
             default:
                 return false;
         }
@@ -54,9 +81,9 @@ public class Game {
          * Changes the gamestate to power state, if a big pellet is eaten. 
          */
         if (grid.getEntity(x, y) == Entity.pellet) {
-            //addScore(10);
+            scoreboard.addScore(10);
         } else if (grid.getEntity(x, y) == Entity.bigPellet) {
-            //addScore(50);
+            scoreboard.addScore(50);
             //changeGameState(new PowerState);
         }
         grid.setEntity(x,y,Entity.empty);
@@ -89,5 +116,9 @@ public class Game {
          */
         Character[] characters = {this.player};
         return characters;
+    }
+
+    public Scoreboard getScoreboard() {
+        return this.scoreboard;
     }
 }

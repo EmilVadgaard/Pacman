@@ -15,7 +15,7 @@ public class GameController {
 
     public GameController() {
         this.game = new Game("map.txt");
-        this.display = new Display(this.game);
+        this.display = new Display(this.game,game.getScoreboard());
         this.desiredDirection = Direction.north;
         run();
     }
@@ -31,7 +31,7 @@ public class GameController {
                 for (Timer t : timers) {
                     t.decrementTime();
                 }
-                display.setOffest(playerMoveTimer.getTime());
+                display.setOffset(playerMoveTimer.getTime());
 
                 if (playerMoveTimer.getTime() == 0) {
                     if (game.isLegal(game.getCharacters()[0], desiredDirection)) {
