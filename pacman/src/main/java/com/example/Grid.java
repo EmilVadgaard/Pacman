@@ -87,4 +87,9 @@ public class Grid {
         return map[y][x];
     }
 
+    public Entity[][] copyGrid(){
+        //return copy
+        return this.map;
+    }
+
 }
