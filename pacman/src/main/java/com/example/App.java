@@ -32,7 +32,7 @@ public class App extends Application {
         root = new Group();
         display = gameController.getDisplay();
         root.getChildren().add(display.getCanvas());
-        Scene scene = new Scene(root, 600, 650, Color.BLACK);
+        Scene scene = new Scene(root, 1000, 1000, Color.BLACK);
         
 
         stage.setScene(scene);

@@ -16,7 +16,7 @@ public class Display {
     int offset = 0;
 
     Game game;
-    int factor = 15;
+    int factor = 20;
     
     int gameOffsetx = 0;
     int gameOffsety = 7;
@@ -32,7 +32,7 @@ public class Display {
 
     public Display(Game game, Scoreboard scoreboard){
         this.game = game;
-        this.canvas = new Canvas(600,650);
+        this.canvas = new Canvas(600,800);
         this.gc = canvas.getGraphicsContext2D();
         this.scoreboard = scoreboard;
     
@@ -50,13 +50,83 @@ public class Display {
                     // gc.setFill(Color.BLUE);
                     // gc.fillRect(x*factor,y*factor,factor,factor);
                     
-                    collection.getEntitySprite(gc, "walls", 0, x+gameOffsetx,y+gameOffsety, factor);
+                    int wallType = calculateWallType(x, y, grid.getMap());
+
+                    collection.getEntitySprite(gc, "walls", wallType, x+gameOffsetx,y+gameOffsety, factor);
 
                 }
             }
         }
     }
 
+    private int calculateWallType(int x, int y, Entity[][] map) {
+        int wallType = 0;
+        int multiplier = 1;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (y+i >= 0 && y+i < map.length && x+j >= 0 && x+j < map[0].length) {
+                    if (map[y+i][x+j] == Entity.wall) {
+                        wallType += multiplier;
+                    }
+                }
+                multiplier *= 2;
+            }
+        }
+        // switch to catch a lot of edge cases in the drawn .txt map
+        switch(wallType) {
+            case 120:
+                return 56;
+            case 150:
+                return 146;
+            case 402:
+                return 146;
+            case 57:
+                return 56;
+            case 312:
+                return 56;
+            case 147:
+                return 146;
+            case 210:
+                return 146;
+            case 60:
+                return 56;
+            case 439:
+                return 438;
+            case 223:
+                return 219;
+            case 127:
+                return 63;
+            case 505:
+                return 504;
+            case 319:
+                return 63;
+            case 508:
+                return 504;
+            case 502:
+                return 438;
+            case 475:
+                return 219;
+            case 211:
+                return 146;
+            case 406:
+                return 146;
+            case 61:
+                return 56;
+            case 376:
+                return 56;
+            case 304:
+                return 48;
+            case 52:
+                return 48;
+            case 25:
+                return 24;
+            case 88:
+                return 24;
+            default:
+                break;
+        }
+        return wallType;
+    }
     public void update() {
         //gc.setFill(Color.BLACK);
         //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.

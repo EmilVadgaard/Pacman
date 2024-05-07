@@ -12,7 +12,7 @@ public class Game {
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
-        this.player = new Player(14, 23, 8);
+        this.player = new Player(14, 21, 8);
         this.scoreboard = new Scoreboard();
     }
 

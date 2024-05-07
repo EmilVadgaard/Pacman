@@ -10,19 +10,18 @@ public class GameController {
 
     private Direction desiredDirection;
     
-    Timer playerMoveTimer = new Timer(15);
     
 
     public GameController() {
-        this.game = new Game("map.txt");
+        this.game = new Game("test.txt");
         this.display = new Display(this.game,game.getScoreboard());
         this.desiredDirection = Direction.north;
         run();
     }
 
     public void run(){
-        //Timer playerMoveTimer = new Timer(15);
-        Timer playerAnimationTimer = new Timer(5);
+        Timer playerMoveTimer = new Timer(30);
+        Timer playerAnimationTimer = new Timer(10);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
         timers.add(playerAnimationTimer);

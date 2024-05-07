@@ -12,7 +12,7 @@ public class Grid {
             this.map = build(blueprint);
         }
         catch(FileNotFoundException ex) {
-            System.out.println("No such file: " + map.toString());
+            System.out.println("This file: " + map.toString() + " does not exist.");
             ex.printStackTrace();
         }
     }
@@ -25,7 +25,6 @@ public class Grid {
             for (int x = 0; x < charMatrix[0].length; x++) {
                 switch(charMatrix[y][x]) {
                     case 'W':
-                        Entity wallType = calculateWallType(x, y, charMatrix);
                         map[y][x] = Entity.wall;
                         break;
                     case 'E':
@@ -83,29 +82,6 @@ public class Grid {
         }
         sc.close();
         return charMap;
-    }
-
-    private Entity calculateWallType(int x, int y, char[][] charMatrix) {
-        int wallType = 0;
-        int multiplier = 1;
-        System.out.println(charMatrix.length + " - y length, " + charMatrix[0].length + "- x length");
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (y+i >= 0 && y+i < charMatrix.length && x+j >= 0 && x+j < charMatrix[0].length) {
-                    if (charMatrix[y+i][x+j] == 'W') {
-                        wallType += multiplier;
-                    }
-                    if (charMatrix[y+i][x+j] == 'O') {
-                        // to-do: Add outside spaces to map.txt
-                    }
-                }
-                multiplier *= 2;
-            }
-        }
-        switch(wallType) {
-            default:
-                return Entity.wall;
-        }
     }
 
     public Entity[][] getMap() {
