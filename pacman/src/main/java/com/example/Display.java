@@ -14,6 +14,7 @@ public class Display {
     Collections collection = new Collections(sheet);
     int playerFrame = 0;
     int offset = 0;
+    int[][] wallTypes;
 
     Game game;
     int factor = 20;
@@ -40,23 +41,30 @@ public class Display {
         createScore();
     }
 
-    private void addWalls(){
-        Grid grid = game.getGrid();
-
-        for (int y = 0; y < grid.getMap().length; y++){
-            for (int x = 0; x < grid.getMap()[0].length; x++){
-                if (grid.getEntity(x, y) == Entity.wall){
-
-                    // gc.setFill(Color.BLUE);
-                    // gc.fillRect(x*factor,y*factor,factor,factor);
-                    
-                    int wallType = calculateWallType(x, y, grid.getMap());
-
-                    collection.getEntitySprite(gc, "walls", wallType, x+gameOffsetx,y+gameOffsety, factor);
-
+    private void updateWalls() {
+        for (int y = 0; y < wallTypes.length; y++) {
+            for (int x = 0; x < wallTypes[0].length; x++) {
+                int wallType = wallTypes[y][x];
+                if (wallType > 0) {
+                    collection.getEntitySprite(gc,"walls",wallType,x+gameOffsetx,y+gameOffsety,factor);
                 }
             }
         }
+    }
+
+    private void addWalls(){
+        Grid grid = game.getGrid();
+        int[][] wallTypes = new int[grid.getMap().length][grid.getMap()[0].length];
+        for (int y = 0; y < grid.getMap().length; y++){
+            for (int x = 0; x < grid.getMap()[0].length; x++){
+                if (grid.getEntity(x, y) == Entity.wall){
+                    wallTypes[y][x] = calculateWallType(x, y, grid.getMap());
+                } else {
+                    wallTypes[y][x] = 0;
+                }
+            }
+        }
+        this.wallTypes = wallTypes;
     }
 
     private int calculateWallType(int x, int y, Entity[][] map) {
@@ -72,8 +80,12 @@ public class Display {
                 multiplier *= 2;
             }
         }
-        // switch to catch a lot of edge cases in the drawn .txt map
-        switch(wallType) {
+        wallType = catchWallEdgeCase(wallType);
+        return wallType;
+    }
+
+    private int catchWallEdgeCase(int input) {
+        switch(input) {
             case 120:
                 return 56;
             case 150:
@@ -123,20 +135,19 @@ public class Display {
             case 88:
                 return 24;
             default:
-                break;
+                return input;
         }
-        return wallType;
     }
     public void update() {
         //gc.setFill(Color.BLACK);
         //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.
         gc.clearRect(gameOffsetx, gameOffsety, 50*factor, 50*factor);
         updatePellets();
-        addWalls();
+        updateWalls();
         updateScore();
-        Character[] characters = game.getCharacters();
+        updatePlayer();
 
-        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX()+gameOffsetx,characters[0].getPosY()+gameOffsety, factor, offset);
+        
 
     }
 
@@ -169,7 +180,8 @@ public class Display {
     }
 
     private void updatePlayer() {
-        
+        Character[] characters = game.getCharacters();
+        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX()+gameOffsetx,characters[0].getPosY()+gameOffsety, factor, offset);
     }
 
     private void updateGhosts() {
