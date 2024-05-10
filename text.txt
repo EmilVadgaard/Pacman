@@ -1,0 +1,19 @@
+Sprite[] ghost2North = new Sprite[2];
+        ghost2North[0] = new Sprite(455 + 64, 64, 16);
+        ghost2North[1] = new Sprite(455 + 80, 64, 16);
+        this.ghost2.put(Direction.north, ghost2North);
+
+        Sprite[] ghost2South = new Sprite[2];
+        ghost2South[0] = new Sprite(455 + 96, 64, 16);
+        ghost2South[1] = new Sprite(455 + 112, 64, 16);
+        this.ghost2.put(Direction.south, ghost2South);
+
+        Sprite[] ghost2East = new Sprite[2];
+        ghost2East[0] = new Sprite(455, 64, 16);
+        ghost2East[1] = new Sprite(455 + 16, 64, 16);
+        this.ghost2.put(Direction.east, ghost2East);
+
+        Sprite[] ghost2West = new Sprite[2];
+        ghost2West[0] = new Sprite(455 + 32, 64, 16);
+        ghost2West[1] = new Sprite(455 + 48, 64, 16);
+        this.ghost2.put(Direction.west, ghost2West);

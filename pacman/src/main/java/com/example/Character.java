@@ -38,4 +38,9 @@ public abstract class Character {
     public int getPosY() {
         return this.posY;
     }
+
+    public void setPosition(int x, int y) {
+        posX = x;
+        posY = y;
+    }
 }

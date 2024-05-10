@@ -29,6 +29,7 @@ public class Display {
     Image sheet = new Image(getClass().getResource("/sprite-sheet.png").toString());
     Collections collection = new Collections(sheet);
     int playerFrame = 0;
+    int ghostFrame = 0;
     int offset = 0;
 
     Game game;
@@ -77,10 +78,7 @@ public class Display {
         gc.clearRect(gameOffsetx, gameOffsety, 28*factor, 28*factor);
         updatePellets();
         addWalls();
-        Character[] characters = game.getCharacters();
-
-        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX(),characters[0].getPosY(), factor, offset);
-
+        updateCharacters();
     }
 
     private void updatePellets() {
@@ -96,12 +94,6 @@ public class Display {
         }
     }
 
-    public void incrementPlayerFrame(){
-        playerFrame++;
-        if (playerFrame == 4){
-            playerFrame = 0;
-        }
-    }
 
     public void setOffest(int playerTime){
         this.offset = ((15 - playerTime)/15)*20;
@@ -111,12 +103,24 @@ public class Display {
         return this.canvas;
     }
 
-    private void updatePlayer() {
-        
+    public void incrementFrames() {
+        playerFrame++;
+        if (playerFrame == 4){
+            playerFrame = 0;
+        }
+        ghostFrame++;
+        if (ghostFrame == 2) {
+            ghostFrame = 0;
+        }
     }
 
-    private void updateGhosts() {
-        
+    private void updateCharacters() {
+        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX(),game.getPlayer().getPosY(), factor, offset);
+        int ghostCounter = 1;
+        for (Ghost ghost: game.getGhosts()) {
+            collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX(),ghost.getPosY(), factor, offset);
+            ghostCounter = (ghostCounter > 1) ? 0: ghostCounter + 1;
+        }
     }
 
     private void createScore(Scoreboard scoreboard) {
