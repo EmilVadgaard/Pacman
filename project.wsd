@@ -167,6 +167,29 @@ class Grid {
     + getEntity(x: int y: int): Entity
 }
 
+interface Ruleset {
+    + isLegal(int, int, Direction): boolean
+}
+
+class PacmanRuleset {
+    + isLegal(int, int, Direction): boolean
+}
+
+class BreadthFirstSearch {
+    search(int, int, int, int): Direction
+}
+
+interface SearchAlgorithm {
+    search(int, int, int int): Direction
+}
+
+BreadthFirstSearch ..|> SearchAlgorithm
+Ghost --> SearchAlgorithm
+BreadthFirstSearch --> Ruleset
+
+PacmanRuleset ..|> Ruleset
+PacmanRuleset o--> Game
+
 App --> GameController
 
 GameController --> Timer

@@ -87,4 +87,12 @@ public class Grid {
         return map[y][x];
     }
 
+    public int getLengthX() {
+        return map[0].length;
+    }
+
+    public int getLengthY() {
+        return map.length;
+    }
+
 }

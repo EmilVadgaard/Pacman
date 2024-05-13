@@ -75,7 +75,7 @@ public class Display {
     public void update() {
         //gc.setFill(Color.BLACK);
         //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.
-        gc.clearRect(gameOffsetx, gameOffsety, 28*factor, 28*factor);
+        gc.clearRect(0, 0, 28*factor, 28*factor);
         updatePellets();
         addWalls();
         updateCharacters();
@@ -119,7 +119,8 @@ public class Display {
         int ghostCounter = 1;
         for (Ghost ghost: game.getGhosts()) {
             collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX(),ghost.getPosY(), factor, offset);
-            ghostCounter = (ghostCounter > 1) ? 0: ghostCounter + 1;
+            // the cap on ghostCounter is equal to: the amount of ghost sprites - 1
+            ghostCounter = (ghostCounter > 1) ? 1: ghostCounter + 1;
         }
     }
 

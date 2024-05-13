@@ -23,10 +23,12 @@ public class GameController {
         Timer playerMoveTimer = new Timer(12);
         Timer ghostMoveTimer = new Timer(12);
         Timer characterAnimationTimer = new Timer(6);
+        Timer ghostWakeTimer = new Timer(600);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
         timers.add(ghostMoveTimer);
         timers.add(characterAnimationTimer);
+        timers.add(ghostWakeTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 for (Timer t : timers) {
@@ -43,7 +45,7 @@ public class GameController {
                     }
                     for (Ghost ghost: game.ghosts) {
                         if (game.characterCollision(game.getPlayer(), ghost)) {
-                            game.resetCharacters();
+                            game.handleCollision(ghost, game.getPlayer());
                         }
                     }
                     playerMoveTimer.reset();
@@ -53,7 +55,7 @@ public class GameController {
                     game.moveGhosts();
                     for (Ghost ghost: game.ghosts) {
                         if (game.characterCollision(game.getPlayer(), ghost)) {
-                            game.resetCharacters();
+                            game.handleCollision(ghost, game.getPlayer());
                         }
                     }
                     ghostMoveTimer.reset();
@@ -64,6 +66,13 @@ public class GameController {
                     characterAnimationTimer.reset();
                 }
                 display.update();
+
+                if (game.hasSleepingGhosts()) {
+                    if (ghostWakeTimer.getTime() == 0) {
+                        game.wakeNextGhost();
+                        ghostWakeTimer.reset();
+                    }
+                }
             }
         }.start();
     }

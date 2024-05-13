@@ -4,9 +4,14 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 public class BreadthFirstSearch implements SearchAlgorithm{
+    Ruleset ruleset;
 
-    public Direction search(Character ghost, Entity[][] map, int goalX, int goalY) {
-        Node node = new Node(ghost.posX, ghost.posY, null);
+    public BreadthFirstSearch(Game game) {
+        ruleset = new PacmanRuleset(game);
+    }
+
+    public Direction search(int startX, int startY, int goalX, int goalY) {
+        Node node = new Node(startX, startY, null);
         if (node.getPosX() == goalX && node.getPosY() == goalY) {
             return node.getDirection();
         }
@@ -16,7 +21,7 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         reached.add(node.getPosX() + ""  + node.getPosY());
         while (frontier.peek() != null) {
             node = frontier.poll();
-            expand(node, map);
+            expand(node);
             for (Node child: node.children) {
                 if (child.getPosX() == goalX && child.getPosY() == goalY) {
                     return child.getDirection();
@@ -30,67 +35,43 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         return null;
     }
 
-    private void expand(Node node, Entity[][] map) {
-        if (isLegal(map, node.getPosX(), node.getPosY(), Direction.north)) {
+    private void expand(Node node) {
+        int[] north = ruleset.nextPosition(node.getPosX(), node.getPosY(), Direction.north);
+        // check if next position exists / is legal
+        if (north != null) {
             if (node.getDirection() != null) {
-                node.addChild(new Node(node.getPosX(),node.getPosY()-1, node.getDirection()));
+                node.addChild(new Node(north[0], north[1], node.getDirection()));
             } else {
-                node.addChild(new Node(node.getPosX(),node.getPosY()-1, Direction.north));
+                node.addChild(new Node(north[0], north[1], Direction.north));
             }
         }
-        if (isLegal(map, node.getPosX(), node.getPosY(), Direction.west)) {
+        int[] west = ruleset.nextPosition(node.getPosX(), node.getPosY(), Direction.west);
+        if (west != null) {
             if (node.getDirection() != null) {
-                node.addChild(new Node(node.getPosX()-1,node.getPosY(), node.getDirection()));
+                node.addChild(new Node(west[0], west[1], node.getDirection()));
             } else {
-                node.addChild(new Node(node.getPosX()-1,node.getPosY(), Direction.west));
+                node.addChild(new Node(west[0], west[1], Direction.west));
             }
         }
-        if (isLegal(map, node.getPosX(), node.getPosY(), Direction.east)) {
+        int[] east = ruleset.nextPosition(node.getPosX(), node.getPosY(), Direction.east);
+        if (east != null) {
             if (node.getDirection() != null) {
-                node.addChild(new Node(node.getPosX()+1,node.getPosY(), node.getDirection()));
+                node.addChild(new Node(east[0], east[1], node.getDirection()));
             } else {
-                node.addChild(new Node(node.getPosX()+1,node.getPosY(), Direction.east));
+                node.addChild(new Node(east[0],east[1], Direction.east));
             }
         }
-        if (isLegal(map, node.getPosX(), node.getPosY(), Direction.south)) {
+        int[] south = ruleset.nextPosition(node.getPosX(), node.getPosY(), Direction.south);
+        if (south != null) {
             if (node.getDirection() != null) {
-                node.addChild(new Node(node.getPosX(),node.getPosY()+1, node.getDirection()));
+                node.addChild(new Node(south[0], south[1], node.getDirection()));
             } else {
-                node.addChild(new Node(node.getPosX(),node.getPosY()+1, Direction.south));
+                node.addChild(new Node(south[0], south[1], Direction.south));
             }
         }
     }
 
-    private boolean isLegal(Entity[][] map, int posX, int posY, Direction direction) {
-        switch(direction) {
-            case north:
-                if (posY - 1 >= 0) {
-                    return map[posY-1][posX] != Entity.wall;
-                } else {
-                    return false;
-                }
-            case west:
-                if (posX - 1 >= 0) {
-                    return map[posY][posX-1] != Entity.wall;
-                } else {
-                    return false;
-                }
-            case east:
-                if (posX + 1 < map[0].length) {
-                    return map[posY][posX+1] != Entity.wall;
-                } else {
-                    return false;
-                }
-            case south:
-                if (posY + 1 < map.length) {
-                    return map[posY+1][posX] != Entity.wall;
-                } else {
-                    return false;
-                }
-            default:
-                return false;
-        }
-    }
+
 
     private class Node {
         protected int posX;

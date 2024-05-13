@@ -13,8 +13,9 @@ public class Ghost extends Character {
         this.intelligence = intelligence;
     }
 
-    public void search(Entity[][] map) {
-        
+    public Direction findDirection(int goalX, int goalY, Game game) {
+        SearchAlgorithm bfs = new BreadthFirstSearch(game);
+        return bfs.search(this.posX, this.posY, goalX, goalY);
     }
 
     public void wake() {
@@ -27,5 +28,9 @@ public class Ghost extends Character {
 
     public int getIntelligence() {
         return intelligence;
+    }
+
+    public boolean isSleeping() {
+        return sleeping;
     }
 }

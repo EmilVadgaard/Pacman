@@ -8,9 +8,9 @@ import java.util.ArrayList;
 public class Game {
     Grid grid;
     Player player;
-    SearchAlgorithm breadthFirst;
     ArrayList<Ghost> ghosts;
     Random numberGenerator;
+    
     
 
     public Game(String filepath) {
@@ -18,23 +18,35 @@ public class Game {
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(13, 18, 3);
-        this.breadthFirst = new BreadthFirstSearch();
         this.numberGenerator = new Random();
 
         this.ghosts = new ArrayList<Ghost>();
-        ghosts.add(new Ghost(13,8,3,8));
-        ghosts.add(new Ghost(14, 8, 3, 12));
+        ghosts.add(new Ghost(12,10,3,4));
+        ghosts.add(new Ghost(13, 10, 3, 6));
+        ghosts.add(new Ghost(14,10,3,8));
     }
 
     public void moveCharacter(Character character) {
-        character.move();
+        if (character.getPosX() == grid.getLengthX() - 1 && character.getDirection() == Direction.east) {
+            character.setPos(0, character.getPosY());
+        } else if (character.getPosX() == 0 && character.getDirection() == Direction.west) {
+            character.setPos(grid.getLengthX() - 1, character.getPosY());
+        } else if (character.getPosY() == 0 && character.getDirection() == Direction.north) {
+            character.setPos(character.getPosX(), grid.getLengthY() - 1);
+        } else if (character.getPosY() == grid.getLengthY() - 1 && character.getDirection() == Direction.south) {
+            character.setPos(character.getPosX(), 0);
+        } else {
+            character.move();
+        }
     }
 
     public void moveGhosts() {
         for (Ghost ghost: ghosts) {
-            Direction direction = generateGhostDirection(ghost);
-            switchDirection(ghost, direction);
-            ghost.move();
+            if (!ghost.isSleeping()) {
+                Direction direction = generateGhostDirection(ghost);
+                switchDirection(ghost, direction);
+                moveCharacter(ghost);
+            }
         }
     }
 
@@ -91,7 +103,7 @@ public class Game {
     }
 
     private Direction findGhostDirection(Ghost ghost) {
-        Direction desiredDirection = breadthFirst.search(ghost, grid.getMap(), player.getPosX(),player.getPosY());
+        Direction desiredDirection = ghost.findDirection(player.getPosX(), player.getPosY(), this);
         return desiredDirection;
     }
 
@@ -101,13 +113,29 @@ public class Game {
         }
         switch(direction) {
             case north:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() - 1));
+                if (character.getPosY() == 0) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() - 1));
+                }
             case west:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() - 1, character.getPosY()));
+                if (character.getPosX() == 0) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() - 1, character.getPosY()));
+                }
             case east:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() + 1, character.getPosY()));
+                if (character.getPosX() == grid.getLengthX() - 1) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() + 1, character.getPosY()));
+                }
             case south:
-                return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() + 1));
+                if (character.getPosY() == grid.getLengthY() - 1) {
+                    return true;
+                } else {
+                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() + 1));
+                }
             default:
                 return false;
         }
@@ -137,10 +165,34 @@ public class Game {
         return ghost.getPosX() == player.getPosX() && ghost.getPosY() == player.getPosY();
     }
 
+    public void handleCollision(Ghost ghost, Character player) {
+        ghost.setPos(13,8);
+    }
+
     public void resetCharacters() {
-        player.setPosition(13, 18);
+        player.setPos(13, 18);
         for (Ghost ghost: ghosts) {
-            ghost.setPosition(13, 8);
+            ghost.setPos(13, 8);
         }
     } 
+
+    public boolean hasSleepingGhosts() {
+        for (Ghost ghost: ghosts) {
+            if (ghost.isSleeping()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void wakeNextGhost() {
+        boolean haveAwoken = false;
+        for (Ghost ghost: ghosts) {
+            if (ghost.isSleeping() && !haveAwoken) {
+                ghost.wake();
+                ghost.setPos(13, 8);
+                haveAwoken = true;
+            }
+        }
+    }
 }
