@@ -4,10 +4,11 @@ import java.net.URL;
 import java.io.File;
 
 public class Game {
-    Grid grid;
-    Player player;
+    private Grid grid;
+    private Player player;
     private int lifeCounter;
     private int score;
+    private int pellets;
 
     public Game(String filepath) {
         URL url = this.getClass().getResource("/" + filepath);
@@ -16,6 +17,7 @@ public class Game {
         this.player = new Player(14, 21, 8);
         this.lifeCounter = 3;
         this.score = 0;
+        this.pellets = countPellets();
     }
 
     public void moveCharacter(Character character){
@@ -89,6 +91,7 @@ public class Game {
             //changeGameState(new PowerState);
         }
         grid.setEntity(x,y,Entity.empty);
+        pellets--;
     }
 
     public void switchDirection(Character character, Direction desiredDirection){
@@ -112,6 +115,21 @@ public class Game {
         return this.grid;
     }
 
+    private int countPellets() {
+        /**
+         * Counts the pellets in the grid.
+         */
+        int pellets = 0;
+        for (int y = 0; y < grid.getLengthY(); y++) {
+            for (int x = 0; x < grid.getLengthX(); x++) {
+                if (grid.getEntity(x, y) == Entity.pellet || grid.getEntity(x, y) == Entity.bigPellet) {
+                    pellets++;
+                }
+            }
+        }
+        return pellets;
+    }
+
     public Character[] getCharacters() {
         /**
          * Returns an array of the current characters in the order: player, ... 
@@ -127,11 +145,15 @@ public class Game {
         return score;
     }
 
-    public void subtractLifeCounter(int n){
-        lifeCounter = lifeCounter - n;
+    public void subtractLifeCounter(){
+        lifeCounter--;
     }
     
     public void addScore(int n){
         score = score + n;
+    }
+
+    public boolean isGameOver() {
+        return pellets == 0 || lifeCounter < 0;
     }
 }
