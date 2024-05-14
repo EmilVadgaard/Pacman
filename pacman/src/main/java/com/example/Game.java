@@ -11,6 +11,7 @@ public class Game implements Ruleset {
     private int lifeCounter;
     private int score;
     private int pellets;
+    private int multiplier;
     private ArrayList<Ghost> ghosts;
     private Random numberGenerator;
 
@@ -24,9 +25,10 @@ public class Game implements Ruleset {
         this.pellets = countPellets();
         this.numberGenerator = new Random();
         this.ghosts = new ArrayList<Ghost>();
-        ghosts.add(new Ghost(12,13,3,4));
-        ghosts.add(new Ghost(13, 13, 3, 6));
-        ghosts.add(new Ghost(14,13,3,8));
+        this.multiplier = 1;
+        ghosts.add(new Ghost(12,13,3,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 3, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,3,12, new NormalGhostState(this)));
     }
 
     public void moveCharacter(Character character){
@@ -49,64 +51,13 @@ public class Game implements Ruleset {
     public void moveGhosts() {
         for (Ghost ghost: ghosts) {
             if (!ghost.isSleeping()) {
-                Direction direction = generateGhostDirection(ghost);
+                Direction direction = ghost.nextDirection(player.getPosX(), player.getPosY());
                 switchDirection(ghost, direction);
                 moveCharacter(ghost);
             }
         }
     }
 
-    private Direction generateGhostDirection(Ghost ghost) {
-        Direction direction = null;
-        switch(numberGenerator.nextInt(ghost.getIntelligence())) {
-            case 0:
-                if (isLegal(ghost, Direction.north) && ghost.getDirection() != Direction.south) {
-                    direction = Direction.north;
-                }
-                break;
-            case 1:
-                if (isLegal(ghost, Direction.west) && ghost.getDirection() != Direction.east) {
-                    direction = Direction.west;
-                }
-                break;
-            case 2:
-                if (isLegal(ghost, Direction.east) && ghost.getDirection() != Direction.west) {
-                    direction = Direction.east;
-                }
-                break;
-            case 3:
-                if (isLegal(ghost, Direction.south) && ghost.getDirection() != Direction.north) {
-                    direction = Direction.south;
-                }
-                break;
-            default:
-                direction = ghost.findDirection(player.getPosX(), player.getPosY(), this);
-                if (is180(ghost.getDirection(), direction)) {
-                    direction = null;
-                }
-                break;
-        }
-        if (isLegal(ghost, direction)) {
-            return direction;
-        } else {
-            return generateGhostDirection(ghost);
-        }
-    }
-
-    private boolean is180(Direction oldDir, Direction newDir) {
-        switch(oldDir) {
-           case north:
-               return newDir == Direction.south;
-           case west:
-               return newDir == Direction.east;
-           case east:
-               return newDir == Direction.west;
-           case south:
-               return newDir == Direction.north;
-           default:
-               return false;
-        }
-   }
 
     public boolean isLegal(Character character, Direction direction) {
         /**
@@ -184,7 +135,9 @@ public class Game implements Ruleset {
             addScore(10);
         } else if (grid.getEntity(x, y) == Entity.bigPellet) {
             addScore(50);
-            //changeGameState(new PowerState);
+            for (Ghost ghost: ghosts) {
+                ghost.changeState(new ScaredGhostState(this));
+            }
         }
         grid.setEntity(x,y,Entity.empty);
         pellets--;
@@ -254,19 +207,31 @@ public class Game implements Ruleset {
         }
     }
 
-    public boolean characterCollision(Character ghost, Character player) {
-        return ghost.getPosX() == player.getPosX() && ghost.getPosY() == player.getPosY();
+    public boolean characterCollision(Ghost ghost, Character player) {
+        if (ghost.hasCollision()) {
+            return ghost.getPosX() == player.getPosX() && ghost.getPosY() == player.getPosY();
+        } else {
+            return false;
+        }
     }
 
     public void handleCollision(Ghost ghost, Character player) {
-        resetCharacters();
-        subtractLifeCounter();
+        if (ghost.canBeEaten()) {
+            addScore(200 * multiplier);
+            multiplier = multiplier * 2;
+            ghost.setPos(ghost.getHomeX(), ghost.getHomeY());
+            ghost.sleep();
+        } else {
+            subtractLifeCounter();
+            resetCharacters();
+        }
     }
 
     public void resetCharacters() {
         player.setPos(14, 21);
         for (Ghost ghost: ghosts) {
-            ghost.setPos(13, 11);
+            ghost.setPos(ghost.getHomeX(), ghost.getHomeY());
+            ghost.sleep();
         }
     } 
 

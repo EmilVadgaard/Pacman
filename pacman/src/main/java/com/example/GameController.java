@@ -44,9 +44,12 @@ public class GameController {
                         game.moveCharacter(game.getPlayer());
                     }
                     for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                        if (game.characterCollision(ghost, game.getPlayer())) {
                             game.handleCollision(ghost, game.getPlayer());
                         }
+                    }
+                    if (game.isEatable(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
+                        game.eat(game.getPlayer().getPosX(), game.getPlayer().getPosY());
                     }
                     playerMoveTimer.reset();
                 }
@@ -54,7 +57,7 @@ public class GameController {
                 if (ghostMoveTimer.getTime() == 0) {
                     game.moveGhosts();
                     for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                        if (game.characterCollision(ghost, game.getPlayer())) {
                             game.handleCollision(ghost, game.getPlayer());
                         }
                     }
@@ -67,11 +70,12 @@ public class GameController {
                 }
                 display.update();
 
-                if (game.hasSleepingGhosts()) {
-                    if (ghostWakeTimer.getTime() == 0) {
-                        game.wakeNextGhost();
-                        ghostWakeTimer.reset();
-                    }
+                if (ghostWakeTimer.getTime() == 0) {
+                    game.wakeNextGhost();
+                    ghostWakeTimer.reset();
+                }
+                if (!game.hasSleepingGhosts()) {
+                    ghostWakeTimer.reset();
                 }
             }
         }.start();
