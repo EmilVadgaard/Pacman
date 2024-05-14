@@ -171,9 +171,6 @@ interface Ruleset {
     + isLegal(int, int, Direction): boolean
 }
 
-class PacmanRuleset {
-    + isLegal(int, int, Direction): boolean
-}
 
 class BreadthFirstSearch {
     search(int, int, int, int): Direction
@@ -183,12 +180,12 @@ interface SearchAlgorithm {
     search(int, int, int int): Direction
 }
 
+Game ..|> Ruleset
+
 BreadthFirstSearch ..|> SearchAlgorithm
 Ghost --> SearchAlgorithm
 BreadthFirstSearch --> Ruleset
 
-PacmanRuleset ..|> Ruleset
-PacmanRuleset o--> Game
 
 App --> GameController
 
