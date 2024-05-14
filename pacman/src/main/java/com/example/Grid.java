@@ -5,14 +5,14 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Grid {
-    Entity[][] map;
+    private Entity[][] map;
 
     public Grid(File blueprint) {
         try {
             this.map = build(blueprint);
         }
         catch(FileNotFoundException ex) {
-            System.out.println("No such file: " + map.toString());
+            System.out.println("This file: " + map.toString() + " does not exist.");
             ex.printStackTrace();
         }
     }
@@ -31,7 +31,12 @@ public class Grid {
                         map[y][x] = Entity.empty;
                         break;
                     case 'P':
+                        map[y][x] = Entity.bigPellet;
+                        break;
+                    case 'p':
                         map[y][x] = Entity.pellet;
+                        break;
+                    default:
                         break;
                 }
             }
@@ -83,8 +88,19 @@ public class Grid {
         return this.map;
     }
 
+    public void setEntity(int x, int y, Entity entity) {
+        map[y][x] = Entity.empty;
+    }
+
     public Entity getEntity(int x, int y) {
         return map[y][x];
     }
 
+    public int getLengthX() {
+        return map[0].length;
+    }
+
+    public int getLengthY() {
+        return map.length;
+    }
 }

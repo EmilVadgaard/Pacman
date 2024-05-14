@@ -20,6 +20,6 @@ public class Scoreboard {
     }
     
     public void addScore(int n){
-        score = score - n;
+        score = score + n;
     }
 }

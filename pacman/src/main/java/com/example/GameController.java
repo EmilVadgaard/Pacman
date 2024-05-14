@@ -10,7 +10,6 @@ public class GameController {
 
     private Direction desiredDirection;
     
-    Timer playerMoveTimer = new Timer(15);
     
 
     public GameController() {
@@ -21,7 +20,7 @@ public class GameController {
     }
 
     public void run(){
-        //Timer playerMoveTimer = new Timer(15);
+        Timer playerMoveTimer = new Timer(15);
         Timer playerAnimationTimer = new Timer(5);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
@@ -31,7 +30,7 @@ public class GameController {
                 for (Timer t : timers) {
                     t.decrementTime();
                 }
-                display.setOffest(playerMoveTimer.getTime());
+                display.setOffset(playerMoveTimer.getTime());
 
                 if (playerMoveTimer.getTime() == 0) {
                     if (game.isLegal(game.getCharacters()[0], desiredDirection)) {
@@ -39,6 +38,10 @@ public class GameController {
                     }
                     if (game.isLegal(game.getCharacters()[0], game.getCharacterDirection(game.getCharacters()[0]))) {
                         game.moveCharacter(game.getCharacters()[0]);
+                        // conditional collision checks after player moves (pellets now, ghosts later)
+                        if (game.isEatable(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY())) {
+                            game.eat(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY());
+                        }
                     }
                     playerMoveTimer.reset();
                 }
