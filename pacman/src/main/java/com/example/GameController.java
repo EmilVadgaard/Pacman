@@ -20,11 +20,15 @@ public class GameController {
     }
 
     public void run(){
-        Timer playerMoveTimer = new Timer(15);
-        Timer playerAnimationTimer = new Timer(5);
+        Timer playerMoveTimer = new Timer(12);
+        Timer ghostMoveTimer = new Timer(12);
+        Timer characterAnimationTimer = new Timer(6);
+        Timer ghostWakeTimer = new Timer(600);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
-        timers.add(playerAnimationTimer);
+        timers.add(ghostMoveTimer);
+        timers.add(characterAnimationTimer);
+        timers.add(ghostWakeTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 for (Timer t : timers) {
@@ -33,23 +37,42 @@ public class GameController {
                 display.setOffset(playerMoveTimer.getTime());
 
                 if (playerMoveTimer.getTime() == 0) {
-                    if (game.isLegal(game.getCharacters()[0], desiredDirection)) {
-                        game.switchDirection(game.getCharacters()[0], desiredDirection);
+                    if (game.isLegal(game.getPlayer(), desiredDirection)) {
+                        game.switchDirection(game.getPlayer(), desiredDirection);
                     }
-                    if (game.isLegal(game.getCharacters()[0], game.getCharacterDirection(game.getCharacters()[0]))) {
-                        game.moveCharacter(game.getCharacters()[0]);
-                        // conditional collision checks after player moves (pellets now, ghosts later)
-                        if (game.isEatable(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY())) {
-                            game.eat(game.getCharacters()[0].getPosX(),game.getCharacters()[0].getPosY());
+                    if (game.isLegal(game.getPlayer(), game.getCharacterDirection(game.getPlayer()))) {
+                        game.moveCharacter(game.getPlayer());
+                    }
+                    for (Ghost ghost: game.getGhosts()) {
+                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                            game.handleCollision(ghost, game.getPlayer());
                         }
                     }
                     playerMoveTimer.reset();
                 }
-                if (playerAnimationTimer.getTime() == 0) {
-                    display.incrementPlayerFrame();
-                    playerAnimationTimer.reset();
+
+                if (ghostMoveTimer.getTime() == 0) {
+                    game.moveGhosts();
+                    for (Ghost ghost: game.getGhosts()) {
+                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                            game.handleCollision(ghost, game.getPlayer());
+                        }
+                    }
+                    ghostMoveTimer.reset();
+                }
+
+                if (characterAnimationTimer.getTime() == 0) {
+                    display.incrementFrames();
+                    characterAnimationTimer.reset();
                 }
                 display.update();
+
+                if (game.hasSleepingGhosts()) {
+                    if (ghostWakeTimer.getTime() == 0) {
+                        game.wakeNextGhost();
+                        ghostWakeTimer.reset();
+                    }
+                }
             }
         }.start();
     }
@@ -62,25 +85,25 @@ public class GameController {
         switch(event.getCode()){
             case UP:
                 this.desiredDirection = Direction.north;
-                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
                 //     playerMoveTimer.reset();
                 // }
                 break;
             case DOWN:
                 this.desiredDirection = Direction.south;
-                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
                 //     playerMoveTimer.reset();
                 // }                
                 break;
             case RIGHT:
                 this.desiredDirection = Direction.east;
-                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
                 //     playerMoveTimer.reset();
                 // }                
                 break;
             case LEFT:
                 this.desiredDirection = Direction.west;
-                // if (game.isLegal(game.getCharacters()[0], desiredDirection) && desiredDirection != game.getCharacters()[0].getDirection()) {
+                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
                 //     playerMoveTimer.reset();
                 // }
                 break;

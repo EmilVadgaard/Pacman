@@ -12,7 +12,8 @@ import javafx.scene.paint.Color; //Baggrund farve
 public class Display {
     Image sheet = new Image(getClass().getResource("/sprite-sheet.png").toString());
     Collections collection = new Collections(sheet);
-    int playerFrame = 0;
+    int ghostFrame;
+    int playerFrame;
     int offset = 0;
     int[][] wallTypes;
 
@@ -31,6 +32,8 @@ public class Display {
         this.game = game;
         this.canvas = new Canvas(600,800);
         this.gc = canvas.getGraphicsContext2D();
+        this.playerFrame = 0;
+        this.ghostFrame = 0;
     
         addWalls();
         createScore();
@@ -157,10 +160,24 @@ public class Display {
         }
     }
 
-    public void incrementPlayerFrame(){
+    private void updateCharacters() {
+        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX(),game.getPlayer().getPosY(), factor, offset);
+        int ghostCounter = 1;
+        for (Ghost ghost: game.getGhosts()) {
+            collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX(),ghost.getPosY(), factor, offset);
+            // the cap on ghostCounter is equal to: the amount of ghost sprites - 1
+            ghostCounter = (ghostCounter > 1) ? 1: ghostCounter + 1;
+        }
+    }
+
+    public void incrementFrames() {
         playerFrame++;
         if (playerFrame == 4){
             playerFrame = 0;
+        }
+        ghostFrame++;
+        if (ghostFrame == 2) {
+            ghostFrame = 0;
         }
     }
 
@@ -173,8 +190,7 @@ public class Display {
     }
 
     private void updatePlayer() {
-        Character[] characters = game.getCharacters();
-        collection.getCharacterSprite(gc, "pacman", characters[0].getDirection(), playerFrame, characters[0].getPosX()+gameOffsetx,characters[0].getPosY()+gameOffsety, factor, offset);
+        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX()+gameOffsetx,game.getPlayer().getPosY()+gameOffsety, factor, offset);
     }
 
     private void updateGhosts() {
