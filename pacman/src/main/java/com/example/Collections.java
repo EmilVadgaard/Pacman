@@ -125,6 +125,26 @@ public class Collections {
         }
     }
 
+    //character
+    public void getSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int size){
+        Sprite sprite = characterCollection.get(group).get(type)[frame];
+        
+        
+        if (sprite != null){    
+            gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], x, y, size, size);
+        }
+    }
+
+    //entity
+    public void getSprite(GraphicsContext gc, String group, int type, int x, int y, int size){
+        Sprite sprite = entityCollection.get(group).get(type);
+        
+        
+        if (sprite != null){    
+            gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], x, y, size, size);
+        }
+    }
+
 
     
 }
