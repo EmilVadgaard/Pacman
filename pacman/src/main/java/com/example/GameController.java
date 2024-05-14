@@ -23,7 +23,7 @@ public class GameController {
         Timer playerMoveTimer = new Timer(12);
         Timer ghostMoveTimer = new Timer(12);
         Timer characterAnimationTimer = new Timer(6);
-        Timer ghostWakeTimer = new Timer(600);
+        Timer ghostWakeTimer = new Timer(300);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
         timers.add(ghostMoveTimer);

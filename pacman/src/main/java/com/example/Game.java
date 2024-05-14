@@ -24,9 +24,9 @@ public class Game implements Ruleset {
         this.pellets = countPellets();
         this.numberGenerator = new Random();
         this.ghosts = new ArrayList<Ghost>();
-        ghosts.add(new Ghost(12,10,3,4));
-        ghosts.add(new Ghost(13, 10, 3, 6));
-        ghosts.add(new Ghost(14,10,3,8));
+        ghosts.add(new Ghost(12,13,3,4));
+        ghosts.add(new Ghost(13, 13, 3, 6));
+        ghosts.add(new Ghost(14,13,3,8));
     }
 
     public void moveCharacter(Character character){
@@ -248,7 +248,7 @@ public class Game implements Ruleset {
         for (Ghost ghost: ghosts) {
             if (ghost.isSleeping() && !haveAwoken) {
                 ghost.wake();
-                ghost.setPos(13, 8);
+                ghost.setPos(13, 11);
                 haveAwoken = true;
             }
         }
@@ -264,9 +264,9 @@ public class Game implements Ruleset {
     }
 
     public void resetCharacters() {
-        player.setPos(13, 18);
+        player.setPos(14, 21);
         for (Ghost ghost: ghosts) {
-            ghost.setPos(13, 8);
+            ghost.setPos(13, 11);
         }
     } 
 

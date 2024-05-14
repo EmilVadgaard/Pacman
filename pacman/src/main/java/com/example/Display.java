@@ -141,10 +141,7 @@ public class Display {
         updatePellets();
         updateWalls();
         updateScore();
-        updatePlayer();
-
-        
-
+        updateCharacters();
     }
 
     private void updatePellets() {
@@ -161,10 +158,10 @@ public class Display {
     }
 
     private void updateCharacters() {
-        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX(),game.getPlayer().getPosY(), factor, offset);
+        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX()+gameOffsetx,game.getPlayer().getPosY()+gameOffsety, factor, offset);
         int ghostCounter = 1;
         for (Ghost ghost: game.getGhosts()) {
-            collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX(),ghost.getPosY(), factor, offset);
+            collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
             // the cap on ghostCounter is equal to: the amount of ghost sprites - 1
             ghostCounter = (ghostCounter > 1) ? 1: ghostCounter + 1;
         }
