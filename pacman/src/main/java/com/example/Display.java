@@ -17,25 +17,20 @@ public class Display {
     int[][] wallTypes;
 
     Game game;
-    int factor = 20;
+    int factor = 15;
     
-    int gameOffsetx = 0;
+    int gameOffsetx = 6;
     int gameOffsety = 7;
-
-    Scoreboard scoreboard;
 
     Canvas canvas;
     GraphicsContext gc;
 
-    private int testCounter = 0; //FJERN DEN HER SENERE. DET BARE TEST FOR SCOREBOARD
-
     Circle pellet;
 
-    public Display(Game game, Scoreboard scoreboard){
+    public Display(Game game){
         this.game = game;
         this.canvas = new Canvas(600,800);
         this.gc = canvas.getGraphicsContext2D();
-        this.scoreboard = scoreboard;
     
         addWalls();
         createScore();
@@ -139,9 +134,7 @@ public class Display {
         }
     }
     public void update() {
-        //gc.setFill(Color.BLACK);
-        //gc.fillRect(0,0,600,650); Erstatet med det der står lige under.
-        gc.clearRect(gameOffsetx, gameOffsety, 50*factor, 50*factor);
+        gc.clearRect(gameOffsetx, gameOffsety+85, 50*factor, 50*factor);
         updatePellets();
         updateWalls();
         updateScore();
@@ -203,11 +196,11 @@ public class Display {
     }
 
     private void updateScore() {
-        gc.clearRect(250, 30, 100, 60);
+        gc.clearRect(250, 30, 100, 60); //250
         gc.setFill(Color.WHITE);
-        gc.fillText("Score:\n" + scoreboard.getScore(), 300, 60);
+        gc.fillText("Score:\n" + game.getScore(), 300, 60);
         
-        switch(scoreboard.getLifeCounter()){
+        switch(game.getLifeCounter()){
             case 3:
                 break;
             case 2:

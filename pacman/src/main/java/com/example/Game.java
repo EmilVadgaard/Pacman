@@ -6,14 +6,16 @@ import java.io.File;
 public class Game {
     Grid grid;
     Player player;
-    Scoreboard scoreboard;
+    private int lifeCounter;
+    private int score;
 
     public Game(String filepath) {
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(14, 21, 8);
-        this.scoreboard = new Scoreboard();
+        this.lifeCounter = 3;
+        this.score = 0;
     }
 
     public void moveCharacter(Character character){
@@ -81,9 +83,9 @@ public class Game {
          * Changes the gamestate to power state, if a big pellet is eaten. 
          */
         if (grid.getEntity(x, y) == Entity.pellet) {
-            scoreboard.addScore(10);
+            addScore(10);
         } else if (grid.getEntity(x, y) == Entity.bigPellet) {
-            scoreboard.addScore(50);
+            addScore(50);
             //changeGameState(new PowerState);
         }
         grid.setEntity(x,y,Entity.empty);
@@ -118,7 +120,18 @@ public class Game {
         return characters;
     }
 
-    public Scoreboard getScoreboard() {
-        return this.scoreboard;
+    public int getLifeCounter() {
+        return lifeCounter;
+    }
+    public int getScore(){
+        return score;
+    }
+
+    public void subtractLifeCounter(int n){
+        lifeCounter = lifeCounter - n;
+    }
+    
+    public void addScore(int n){
+        score = score + n;
     }
 }

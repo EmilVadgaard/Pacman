@@ -14,7 +14,7 @@ public class GameController {
 
     public GameController() {
         this.game = new Game("map.txt");
-        this.display = new Display(this.game,game.getScoreboard());
+        this.display = new Display(this.game);
         this.desiredDirection = Direction.north;
         run();
     }
