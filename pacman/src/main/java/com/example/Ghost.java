@@ -13,8 +13,8 @@ public class Ghost extends Character {
         this.intelligence = intelligence;
     }
 
-    public Direction findDirection(int goalX, int goalY, Game game) {
-        SearchAlgorithm bfs = new BreadthFirstSearch(game);
+    public Direction findDirection(int goalX, int goalY, Ruleset ruleset) {
+        SearchAlgorithm bfs = new BreadthFirstSearch(ruleset);
         return bfs.search(this.posX, this.posY, goalX, goalY);
     }
 

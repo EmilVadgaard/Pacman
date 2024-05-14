@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class Game {
+public class Game implements Ruleset {
     Grid grid;
     Player player;
     ArrayList<Ghost> ghosts;
@@ -111,33 +111,51 @@ public class Game {
         if (direction == null) {
             return false;
         }
+        return nextPosition(character.getPosX(), character.getPosY(), direction) != null;
+    }
+
+    public int[] nextPosition(int posX, int posY, Direction direction) {
+        int[] coords = new int[2];
         switch(direction) {
             case north:
-                if (character.getPosY() == 0) {
-                    return true;
+                if (posY == 0) {
+                    coords[1] = grid.getLengthY() - 1;
                 } else {
-                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() - 1));
+                    coords[1] = posY - 1;
                 }
+                coords[0] = posX;
+                break;
             case west:
-                if (character.getPosX() == 0) {
-                    return true;
+                if (posX == 0) {
+                    coords[0] = grid.getLengthX() - 1;
                 } else {
-                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() - 1, character.getPosY()));
+                    coords[0] = posX - 1;
                 }
+                coords[1] = posY;
+                break;
             case east:
-                if (character.getPosX() == grid.getLengthX() - 1) {
-                    return true;
+                if (posX == grid.getLengthX() - 1) {
+                    coords[0] = 0;
                 } else {
-                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX() + 1, character.getPosY()));
+                    coords[0] = posX + 1;
                 }
+                coords[1] = posY;
+                break;
             case south:
-                if (character.getPosY() == grid.getLengthY() - 1) {
-                    return true;
+                if (posY == grid.getLengthY() - 1) {
+                    coords[1] = 0;
                 } else {
-                    return !CollisionDetection.wallInFront(grid.getEntity(character.getPosX(), character.getPosY() + 1));
+                    coords[1] = posY + 1;
                 }
+                coords[0] = posX;
+                break;
             default:
-                return false;
+                return null;
+        }
+        if (grid.getEntity(coords[0], coords[1]) == Entity.wall) {
+            return null;
+        } else {
+            return coords;
         }
     }
 

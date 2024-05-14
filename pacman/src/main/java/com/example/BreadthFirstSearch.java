@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class BreadthFirstSearch implements SearchAlgorithm{
     Ruleset ruleset;
 
-    public BreadthFirstSearch(Game game) {
-        ruleset = new PacmanRuleset(game);
+    public BreadthFirstSearch(Ruleset ruleset) {
+        this.ruleset = ruleset;
     }
 
     public Direction search(int startX, int startY, int goalX, int goalY) {
