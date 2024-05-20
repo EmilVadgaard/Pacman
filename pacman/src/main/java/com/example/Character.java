@@ -47,4 +47,8 @@ public abstract class Character {
     public int getSpeed() {
         return this.speed;
     }
+
+    public boolean hasCollision() {
+        return true;
+    }
 }

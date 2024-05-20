@@ -10,8 +10,9 @@ public class Timer {
     }
 
     public void decrementTime() {
-        this.currentTime--;
-        
+        if (currentTime >= 0) {
+            this.currentTime--;
+        }
     }
 
     public int getTime() {

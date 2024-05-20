@@ -30,6 +30,9 @@ public class Grid {
                     case 'E':
                         map[y][x] = Entity.empty;
                         break;
+                    case 'D':
+                        map[y][x] = Entity.door;
+                        break;
                     case 'P':
                         map[y][x] = Entity.bigPellet;
                         break;

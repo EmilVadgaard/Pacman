@@ -27,6 +27,7 @@ public class Ghost extends Character {
         return state.canBeEaten();
     }
 
+    @Override
     public boolean hasCollision() {
         return state.hasCollision();
     }
