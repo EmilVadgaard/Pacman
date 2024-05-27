@@ -13,21 +13,23 @@ public class Game implements Ruleset {
     private int pellets;
     private int multiplier;
     private ArrayList<Ghost> ghosts;
+    private boolean playerIsSpawned;
 
     public Game(String filepath){
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
-        this.player = new Player(14, 21, 15);
+        this.player = new Player(14, 21, 12);
+        this.playerIsSpawned = false;
         this.lifeCounter = 2;
         this.score = 0;
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
         this.multiplier = 1;
-        ghosts.add(new Ghost(12,13,15,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 15, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,15,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,15,16, new NormalGhostState(this)));
+        ghosts.add(new Ghost(12,13,14,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 14, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,14,12, new NormalGhostState(this)));
+        ghosts.add(new Ghost(15,13,14,16, new NormalGhostState(this)));
     }
 
     public void moveCharacter(Character character){
@@ -66,6 +68,8 @@ public class Game implements Ruleset {
             }
         }
     }
+
+
 
 
     public boolean isLegal(Character character, Direction direction) {
@@ -275,6 +279,7 @@ public class Game implements Ruleset {
         } else {
             subtractLifeCounter();
             resetCharacters();
+            playerIsSpawned = false;
             multiplier = 1;
         }
     }
@@ -290,6 +295,17 @@ public class Game implements Ruleset {
             ghost.changeState(new NormalGhostState(this));
         }
     } 
+
+    public boolean playerIsSpawned() {
+        /**
+         * Returns true if player is dead.
+         */
+        return playerIsSpawned;
+    }
+
+    public void spawnPlayer() {
+        playerIsSpawned = true;
+    }
 
     public int getLifeCounter() {
         /**
@@ -329,16 +345,16 @@ public class Game implements Ruleset {
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
-        this.player = new Player(14, 21, 15);
+        this.player = new Player(14, 21, 12);
         this.lifeCounter = 2;
         this.score = 0;
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
         this.multiplier = 1;
-        ghosts.add(new Ghost(12,13,15,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 15, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,15,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,15,16, new NormalGhostState(this)));
+        ghosts.add(new Ghost(12,13,14,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 14, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,14,12, new NormalGhostState(this)));
+        ghosts.add(new Ghost(15,13,14,16, new NormalGhostState(this)));
     }
 
 }
