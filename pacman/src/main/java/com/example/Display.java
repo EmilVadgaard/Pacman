@@ -36,7 +36,6 @@ public class Display {
         this.ghostFrame = 0;
     
         addWalls();
-        createScore();
     }
 
     private void updateWalls() {
@@ -137,7 +136,7 @@ public class Display {
         }
     }
     public void update() {
-        gc.clearRect(gameOffsetx, gameOffsety+85, 50*factor, 50*factor);
+        gc.clearRect(0, 0, 600, 650);
         updatePellets();
         updateWalls();
         updateScore();
@@ -194,38 +193,40 @@ public class Display {
         
     }
 
-    private void createScore() {
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial Black", 20));
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("Score:\n0", 300, 60);
-
-        gc.fillText("Lives: ", 70, 60);
-
-        gc.setFill(Color.YELLOW);
-        gc.fillRect(40,70,factor/1.25,factor/1.25);
-        gc.fillRect(62,70,factor/1.25,factor/1.25);
-        gc.fillRect(84,70,factor/1.25,factor/1.25);
-    }
-
     private void updateScore() {
         gc.clearRect(250, 30, 100, 60); //250
         gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial Black", 20));
+        gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText("Score:\n" + game.getScore(), 300, 60);
         
+        gc.clearRect(40, 60, factor/1.25+30, (factor/1.25)*2);
+        gc.fillText("Lives: ", 70, 60);
         switch(game.getLifeCounter()){
-            case 3:
-                break;
             case 2:
-                gc.clearRect(84, 70, factor/1.25, factor/1.25);    
+                gc.setFill(Color.YELLOW);
+                gc.fillRect(40,70,factor/1.25,factor/1.25);
+                gc.fillRect(62,70,factor/1.25,factor/1.25);
+                gc.fillRect(84,70,factor/1.25,factor/1.25);
                 break;
             case 1:
-                gc.clearRect(62, 70, factor/1.25+12, factor/1.25);    
+                gc.setFill(Color.YELLOW);
+                gc.fillRect(40,70,factor/1.25,factor/1.25);
+                gc.fillRect(62,70,factor/1.25,factor/1.25);  
                 break;
-            default:
-                gc.clearRect(40, 70, factor/1.25+24, factor/1.25);    
+            case 0:
+                gc.setFill(Color.YELLOW);
+                gc.fillRect(40,70,factor/1.25,factor/1.25);
+                break;
+            default:    
                 break;
         }
+    }
+
+    public void showResetMenu() {
+        gc.clearRect(0, 0, 600, 800);
+        gc.setFill(Color.WHITE);
+        gc.fillText("Score: " + game.getScore(), 300, 280);
     }
 
 

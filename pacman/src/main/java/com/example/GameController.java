@@ -2,12 +2,18 @@ package com.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import java.util.ArrayList;
+import javafx.stage.Stage;
 
 public class GameController {
-    private final Display display;
-    private final Game game;
-
+    private Display display;
+    private Game game;
+    private Button resetButton;
     private Direction desiredDirection;
     
     
@@ -16,6 +22,17 @@ public class GameController {
         this.game = new Game("map.txt");
         this.display = new Display(this.game);
         this.desiredDirection = Direction.north;
+
+        resetButton = new Button("Reset game");
+        resetButton.setLayoutX(238);
+        resetButton.setLayoutY(320);
+        resetButton.setVisible(false);
+        resetButton.setDisable(true);
+        //resetButton.setCancelButton(true);
+        Font buttonFont = Font.font("Courier New", FontWeight.BOLD, 17);
+        resetButton.setFont(buttonFont);
+        resetButton.setOnAction(this::processResetButton);
+
         run();
     }
 
@@ -93,7 +110,14 @@ public class GameController {
                 if (!game.hasSleepingGhosts()) {
                     ghostWakeTimer.reset();
                 }
+                if (game.isGameOver()){
+                    stop();
+                    display.showResetMenu();
+                    resetButton.setVisible(true);
+                    resetButton.setDisable(false);
+                }
             }
+            
         }.start();
     }
 
@@ -131,6 +155,18 @@ public class GameController {
                 break;
         }
     }
-    
+
+    public void processResetButton (ActionEvent event){
+        //if(event.getSource() == resetButton){
+            resetButton.setDisable(true);
+            resetButton.setVisible(false);
+            game.resetGame("map.txt");
+            run();
+        //}
+    }
+
+    public Button getResetButton(){
+        return resetButton;
+    }
     
 }
