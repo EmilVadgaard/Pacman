@@ -8,6 +8,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import java.util.ArrayList;
+import javafx.stage.Stage;
 
 public class GameController {
     private Display display;
@@ -21,15 +22,17 @@ public class GameController {
         this.game = new Game("map.txt");
         this.display = new Display(this.game);
         this.desiredDirection = Direction.north;
+
         resetButton = new Button("Reset game");
         resetButton.setLayoutX(238);
         resetButton.setLayoutY(320);
         resetButton.setVisible(false);
         resetButton.setDisable(true);
-        resetButton.setCancelButton(true);
+        //resetButton.setCancelButton(true);
         Font buttonFont = Font.font("Courier New", FontWeight.BOLD, 17);
         resetButton.setFont(buttonFont);
         resetButton.setOnAction(this::processResetButton);
+
         run();
     }
 
@@ -109,7 +112,7 @@ public class GameController {
                 }
                 if (game.isGameOver()){
                     stop();
-                    display.ResetScreen();
+                    display.showResetMenu();
                     resetButton.setVisible(true);
                     resetButton.setDisable(false);
                 }
@@ -155,9 +158,9 @@ public class GameController {
 
     public void processResetButton (ActionEvent event){
         //if(event.getSource() == resetButton){
-            this.game = new Game("map.txt");
-            this.display = new Display(this.game);
-            System.out.print("Test");
+            resetButton.setDisable(true);
+            resetButton.setVisible(false);
+            game.resetGame("map.txt");
             run();
         //}
     }
@@ -165,6 +168,5 @@ public class GameController {
     public Button getResetButton(){
         return resetButton;
     }
-    
     
 }

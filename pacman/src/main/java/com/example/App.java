@@ -25,32 +25,33 @@ import javafx.scene.Parent;
 public class App extends Application {
     public Group root;
     private static Stage stage;
-    GameController gameController = new GameController();
+    private GameController gameController;
     Display display;
     Button testButton = new Button("Test");
 
 
     @Override
     public void start(Stage stage) {
+        GameController gameController = new GameController();
         /*GridPane*/
         root = new Group();
         display = gameController.getDisplay();
         
-        root.getChildren().add(display.getCanvas());
-        root.getChildren().add(gameController.getResetButton());
-        root.getChildren().add(testButton);
+        root.getChildren().addAll(display.getCanvas(), gameController.getResetButton());
+        //root.getChildren().add(gameController.getResetButton());
+        //root.getChildren().add(testButton);
 
         Scene scene = new Scene(root, 600, 650, Color.BLACK);
         
-        scene.setOnKeyPressed(gameController::handleKeyPress);
+        testButton.setCancelButton(true);
         testButton.setOnAction(this::processTestButton);
 
         stage.setScene(scene);
         stage.setTitle("Pacman");
         
         stage.show();
-
-
+        
+        scene.setOnKeyPressed(gameController::handleKeyPress);
     }
 
     public static void main(String[] args) {
@@ -59,14 +60,22 @@ public class App extends Application {
 
     public void reset(Stage stage){
         root.getChildren().removeAll(display.getCanvas());
-        root.getChildren().removeAll(gameController.getResetButton());
+
         
     }
+
+
     public void processTestButton (ActionEvent event){
         if(event.getSource() == testButton){
+            gameController = new GameController();
+            root.getChildren().add(display.getCanvas());
             System.out.print("Test3");
-            reset(stage);
+           // reset(stage);
             System.out.print("Test2");
+            //start(new Stage());
+            //stage.close();
+
+
         }
     }
 
