@@ -14,10 +14,15 @@ public class Collections {
     private Map<Direction, Sprite[]> ghost2;
     private Map<Direction, Sprite[]> ghost3;
     private Map<Direction, Sprite[]> ghost4;
+    private Map<Direction, Sprite[]> scaredGhost;
+    private Map<Direction, Sprite[]> deadGhost;
+
 
     private Map<String, Map<Integer, Sprite>> entityCollection;
     private Map<Integer, Sprite> walls;
     private Map<Integer, Sprite> pellet;
+    private Map<Integer, Sprite> bigPellet;
+    private Map<Integer, Sprite> door;
 
     public Collections(Image spriteSheetPath){
         this.spriteSheet = spriteSheetPath;
@@ -25,16 +30,28 @@ public class Collections {
         this.pacman = new HashMap<>();
         this.ghost1 = new HashMap<>();
         this.ghost2 = new HashMap<>();
+        this.ghost3 = new HashMap<>();
+        this.ghost4 = new HashMap<>();
 
         this.entityCollection = new HashMap<>();
         this.walls = new HashMap<>();
         this.pellet = new HashMap<>();
+        this.bigPellet = new HashMap<>();
+        this.door = new HashMap<>();
 
         this.characterCollection.put("pacman", this.pacman);
-        this.characterCollection.put("ghost1",this.ghost1);
-        this.characterCollection.put("ghost2",this.ghost2);
+        this.characterCollection.put("ghost1", this.ghost1);
+        this.characterCollection.put("ghost2", this.ghost2);
+        this.characterCollection.put("ghost3", this.ghost3);
+        this.characterCollection.put("ghost4", this.ghost4);
+        this.characterCollection.put("scared", this.scaredGhost);
+        this.characterCollection.put("dead", this.deadGhost);
+
+        
         this.entityCollection.put("walls", this.walls);
         this.entityCollection.put("pellet", this.pellet);
+        this.entityCollection.put("bigPellet", this.bigPellet);
+        this.entityCollection.put("door", this.door);
 
         initializeSprites();
     }
@@ -68,8 +85,14 @@ public class Collections {
         pacmanWest[3] = new Sprite(454+16, 16, 16);
         this.pacman.put(Direction.west, pacmanWest);
 
+
+        //Pellet
         this.pellet.put(0, new Sprite(8,8,8));
         this.pellet.put(1, new Sprite(24,8,8));
+
+        //BigPellet
+        this.bigPellet.put(0, new Sprite(80,0,8));
+        this.bigPellet.put(1, new Sprite(24,8,8)); //empty
 
         // ghost 1
         Sprite[] ghost1North = new Sprite[2];
@@ -113,6 +136,73 @@ public class Collections {
         ghost2West[1] = new Sprite(455 + 48, 64 + 16, 16);
         this.ghost2.put(Direction.west, ghost2West);
 
+        //ghost 3
+        Sprite[] ghost3North = new Sprite[2];
+        ghost2North[0] = new Sprite(455 + 64, 64 + 32, 16);
+        ghost2North[1] = new Sprite(455 + 80, 64 + 32, 16);
+        this.ghost3.put(Direction.north, ghost3North);
+
+        Sprite[] ghost3South = new Sprite[2];
+        ghost2South[0] = new Sprite(455 + 96, 64 + 32, 16);
+        ghost2South[1] = new Sprite(455 + 112, 64 + 32, 16);
+        this.ghost3.put(Direction.south, ghost3South);
+
+        Sprite[] ghost3East = new Sprite[2];
+        ghost2East[0] = new Sprite(455, 64 + 32, 16);
+        ghost2East[1] = new Sprite(455 + 16, 64 + 32, 16);
+        this.ghost3.put(Direction.east, ghost3East);
+
+        Sprite[] ghost3West = new Sprite[2];
+        ghost2West[0] = new Sprite(455 + 32, 64 + 32, 16);
+        ghost2West[1] = new Sprite(455 + 48, 64 + 32, 16);
+        this.ghost3.put(Direction.west, ghost3West);
+
+        //ghost 4 i rækkefølge
+        Sprite[] ghost4North = new Sprite[2];
+        ghost2North[0] = new Sprite(455 + 64, 64 + 48, 16);
+        ghost2North[1] = new Sprite(455 + 80, 64 + 48, 16);
+        this.ghost4.put(Direction.north, ghost4North);
+
+        Sprite[] ghost4South = new Sprite[2];
+        ghost2South[0] = new Sprite(455 + 96, 64 + 48, 16);
+        ghost2South[1] = new Sprite(455 + 112, 64 + 48, 16);
+        this.ghost4.put(Direction.south, ghost4South);
+
+        Sprite[] ghost4East = new Sprite[2];
+        ghost2East[0] = new Sprite(455, 64 + 48, 16);
+        ghost2East[1] = new Sprite(455 + 16, 64 + 48, 16);
+        this.ghost4.put(Direction.east, ghost4East);
+
+        Sprite[] ghost4West = new Sprite[2];
+        ghost2West[0] = new Sprite(455 + 32, 64 + 48, 16);
+        ghost2West[1] = new Sprite(455 + 48, 64 + 48, 16);
+        this.ghost4.put(Direction.west, ghost4West);
+
+        //Scared Ghost 584 64
+        Sprite[] scaredGhostSprite = new Sprite[4];
+        scaredGhostSprite[0] = new Sprite(484, 64, 16);
+        scaredGhostSprite[1] = new Sprite(484+16, 64, 16);
+        scaredGhostSprite[2] = new Sprite(484+32, 64, 16);
+        scaredGhostSprite[3] = new Sprite(484+48, 64, 16);
+        this.scaredGhost.put(Direction.north, scaredGhostSprite);
+
+        //Dead Ghost 584 64+16
+        Sprite[] deadGhostEast = new Sprite[1];
+        deadGhostEast[0] = new Sprite(584, 64, 16);
+        this.deadGhost.put(Direction.east, deadGhostEast);
+
+        Sprite[] deadGhostWest = new Sprite[1];
+        deadGhostWest[0] = new Sprite(584+16, 64, 16);
+        this.deadGhost.put(Direction.west, deadGhostWest);
+
+        Sprite[] deadGhostNorth = new Sprite[1];
+        deadGhostNorth[0] = new Sprite(584+32, 64, 16);
+        this.deadGhost.put(Direction.north, deadGhostNorth);
+
+        Sprite[] deadGhostSouth = new Sprite[1];
+        deadGhostSouth[0] = new Sprite(584+48, 64, 16);
+        this.deadGhost.put(Direction.south, deadGhostSouth);
+
         // straight walls
         this.walls.put(146, new Sprite(0,8,8));
         this.walls.put(219, new Sprite(0,24,8));
@@ -151,6 +241,9 @@ public class Collections {
         this.walls.put(447, new Sprite(104,00,8));
         this.walls.put(507, new Sprite(88,16,8));
         this.walls.put(510, new Sprite(104,16,8));
+
+        //Door
+        this.door.put(0, new Sprite(80,16,8));
 
 
     }
