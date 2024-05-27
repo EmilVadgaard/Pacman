@@ -19,7 +19,7 @@ public class Game implements Ruleset {
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(14, 21, 15);
-        this.lifeCounter = 0;
+        this.lifeCounter = 2;
         this.score = 0;
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
