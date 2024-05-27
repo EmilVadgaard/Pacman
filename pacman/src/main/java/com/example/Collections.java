@@ -35,7 +35,6 @@ public class Collections {
         this.scaredGhost = new HashMap<>();
         this.deadGhost = new HashMap<>();
 
-
         this.entityCollection = new HashMap<>();
         this.walls = new HashMap<>();
         this.pellet = new HashMap<>();
@@ -160,7 +159,7 @@ public class Collections {
         ghost3West[1] = new Sprite(455 + 48, 64 + 32, 16);
         this.ghost3.put(Direction.west, ghost3West);
 
-        //ghost 4 i rækkefølge
+        //ghost 4
         Sprite[] ghost4North = new Sprite[2];
         ghost4North[0] = new Sprite(455 + 64, 64 + 48, 16);
         ghost4North[1] = new Sprite(455 + 80, 64 + 48, 16);
