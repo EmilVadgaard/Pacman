@@ -140,69 +140,69 @@ public class Collections {
 
         //ghost 3
         Sprite[] ghost3North = new Sprite[2];
-        ghost2North[0] = new Sprite(455 + 64, 64 + 32, 16);
-        ghost2North[1] = new Sprite(455 + 80, 64 + 32, 16);
+        ghost3North[0] = new Sprite(455 + 64, 64 + 32, 16);
+        ghost3North[1] = new Sprite(455 + 80, 64 + 32, 16);
         this.ghost3.put(Direction.north, ghost3North);
 
         Sprite[] ghost3South = new Sprite[2];
-        ghost2South[0] = new Sprite(455 + 96, 64 + 32, 16);
-        ghost2South[1] = new Sprite(455 + 112, 64 + 32, 16);
+        ghost3South[0] = new Sprite(455 + 96, 64 + 32, 16);
+        ghost3South[1] = new Sprite(455 + 112, 64 + 32, 16);
         this.ghost3.put(Direction.south, ghost3South);
 
         Sprite[] ghost3East = new Sprite[2];
-        ghost2East[0] = new Sprite(455, 64 + 32, 16);
-        ghost2East[1] = new Sprite(455 + 16, 64 + 32, 16);
+        ghost3East[0] = new Sprite(455, 64 + 32, 16);
+        ghost3East[1] = new Sprite(455 + 16, 64 + 32, 16);
         this.ghost3.put(Direction.east, ghost3East);
 
         Sprite[] ghost3West = new Sprite[2];
-        ghost2West[0] = new Sprite(455 + 32, 64 + 32, 16);
-        ghost2West[1] = new Sprite(455 + 48, 64 + 32, 16);
+        ghost3West[0] = new Sprite(455 + 32, 64 + 32, 16);
+        ghost3West[1] = new Sprite(455 + 48, 64 + 32, 16);
         this.ghost3.put(Direction.west, ghost3West);
 
         //ghost 4
         Sprite[] ghost4North = new Sprite[2];
-        ghost2North[0] = new Sprite(455 + 64, 64 + 48, 16);
-        ghost2North[1] = new Sprite(455 + 80, 64 + 48, 16);
+        ghost4North[0] = new Sprite(455 + 64, 64 + 48, 16);
+        ghost4North[1] = new Sprite(455 + 80, 64 + 48, 16);
         this.ghost4.put(Direction.north, ghost4North);
 
         Sprite[] ghost4South = new Sprite[2];
-        ghost2South[0] = new Sprite(455 + 96, 64 + 48, 16);
-        ghost2South[1] = new Sprite(455 + 112, 64 + 48, 16);
+        ghost4South[0] = new Sprite(455 + 96, 64 + 48, 16);
+        ghost4South[1] = new Sprite(455 + 112, 64 + 48, 16);
         this.ghost4.put(Direction.south, ghost4South);
 
         Sprite[] ghost4East = new Sprite[2];
-        ghost2East[0] = new Sprite(455, 64 + 48, 16);
-        ghost2East[1] = new Sprite(455 + 16, 64 + 48, 16);
+        ghost4East[0] = new Sprite(455, 64 + 48, 16);
+        ghost4East[1] = new Sprite(455 + 16, 64 + 48, 16);
         this.ghost4.put(Direction.east, ghost4East);
 
         Sprite[] ghost4West = new Sprite[2];
-        ghost2West[0] = new Sprite(455 + 32, 64 + 48, 16);
-        ghost2West[1] = new Sprite(455 + 48, 64 + 48, 16);
+        ghost4West[0] = new Sprite(455 + 32, 64 + 48, 16);
+        ghost4West[1] = new Sprite(455 + 48, 64 + 48, 16);
         this.ghost4.put(Direction.west, ghost4West);
 
         //Scared Ghost 584 64
         Sprite[] scaredGhostSprite = new Sprite[4];
-        scaredGhostSprite[0] = new Sprite(484, 64, 16);
-        scaredGhostSprite[1] = new Sprite(484+16, 64, 16);
-        scaredGhostSprite[2] = new Sprite(484+32, 64, 16);
-        scaredGhostSprite[3] = new Sprite(484+48, 64, 16);
+        scaredGhostSprite[0] = new Sprite(455 + 112 + 16, 64, 16);
+        scaredGhostSprite[1] = new Sprite(455 + 112 + 32, 64, 16);
+        scaredGhostSprite[2] = new Sprite(455 + 112 + 48, 64, 16);
+        scaredGhostSprite[3] = new Sprite(455 + 112 + 64, 64, 16);
         this.scaredGhost.put(Direction.north, scaredGhostSprite);
 
         //Dead Ghost 584 64+16
         Sprite[] deadGhostEast = new Sprite[1];
-        deadGhostEast[0] = new Sprite(584, 64, 16);
+        deadGhostEast[0] = new Sprite(584, 64 + 16, 16);
         this.deadGhost.put(Direction.east, deadGhostEast);
 
         Sprite[] deadGhostWest = new Sprite[1];
-        deadGhostWest[0] = new Sprite(584+16, 64, 16);
+        deadGhostWest[0] = new Sprite(584+16, 64 + 16, 16);
         this.deadGhost.put(Direction.west, deadGhostWest);
 
         Sprite[] deadGhostNorth = new Sprite[1];
-        deadGhostNorth[0] = new Sprite(584+32, 64, 16);
+        deadGhostNorth[0] = new Sprite(584+32, 64 + 16, 16);
         this.deadGhost.put(Direction.north, deadGhostNorth);
 
         Sprite[] deadGhostSouth = new Sprite[1];
-        deadGhostSouth[0] = new Sprite(584+48, 64, 16);
+        deadGhostSouth[0] = new Sprite(584+48, 64 + 16, 16);
         this.deadGhost.put(Direction.south, deadGhostSouth);
 
         // straight walls

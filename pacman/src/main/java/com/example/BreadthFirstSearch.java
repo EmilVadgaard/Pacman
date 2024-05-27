@@ -20,16 +20,15 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         LinkedList<Node> frontier = new LinkedList<Node>();
         frontier.add(node);
         ArrayList<String> reached = new ArrayList<String>();
-        reached.add(node.getPosX() + ""  + node.getPosY());
+        reached.add(node.getKey());
         while (frontier.peek() != null) {
             node = frontier.poll();
             expand(node);
-            for (Node child: node.children) {
+            for (Node child: node.getChildren()) {
                 if (child.getPosX() == goalX && child.getPosY() == goalY) {
                     return child.getDirection();
-                }
-                if (!reached.contains(child.getPosX() + "" + child.getPosY())) {
-                    reached.add(child.getPosX() + "" + child.getPosY());
+                } else if (!reached.contains(child.getKey())) {
+                    reached.add(child.getKey());
                     frontier.add(child);
                 }
             }
@@ -73,23 +72,27 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         }
     }
 
-
-
     private class Node {
         protected int posX;
         protected int posY;
         protected Direction initialDirection;
         protected ArrayList<Node> children;
+        protected String key;
 
         private Node(int posX, int posY, Direction initialDirection) {
             this.posX = posX;
             this.posY = posY;
             this.initialDirection = initialDirection;
             this.children = new ArrayList<Node>();
+            this.key = posX + " " + posY;
         }
 
         public void addChild(Node child) {
             children.add(child);
+        }
+
+        public ArrayList<Node> getChildren() {
+            return children;
         }
 
         public int getPosX() {
@@ -97,6 +100,9 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         }
         public int getPosY() {
             return posY;
+        }
+        public String getKey() {
+            return key;
         }
         public Direction getDirection() {
             return this.initialDirection;

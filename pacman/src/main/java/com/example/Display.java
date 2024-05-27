@@ -47,6 +47,8 @@ public class Display {
                 }
                 if (wallType > 0) {
                     collection.getEntitySprite(gc,"walls",wallType,x+gameOffsetx,y+gameOffsety,factor);
+                } else if (wallType == -1) {
+                    collection.getEntitySprite(gc,"door",0,x+gameOffsetx,y+gameOffsety,factor);
                 }
             }
         }
@@ -59,9 +61,9 @@ public class Display {
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.wall){
                     wallTypes[y][x] = calculateWallType(x, y, grid.getMap());
-                } else if (grid.getEntity(x, y) == Entity.door){
+                } else if (grid.getEntity(x, y) == Entity.door) {
                     wallTypes[y][x] = -1;
-                }else {
+                } else {
                     wallTypes[y][x] = 0;
                 }
             }
@@ -153,9 +155,9 @@ public class Display {
         for (int y = 0; y < grid.getMap().length; y++){
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.pellet){
-
                     collection.getEntitySprite(gc, "pellet", 0, x+gameOffsetx,y+gameOffsety, factor);
-
+                } else if (grid.getEntity(x, y) == Entity.bigPellet) {
+                    collection.getEntitySprite(gc, "bigPellet", 0, x+gameOffsetx,y+gameOffsety, factor);
                 }
                 if (grid.getEntity(x, y) == Entity.bigPellet){
                     collection.getEntitySprite(gc, "bigPellet", 0, x+gameOffsetx,y+gameOffsety, factor);
@@ -165,13 +167,21 @@ public class Display {
     }
 
     private void updateCharacters() {
-        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX()+gameOffsetx,game.getPlayer().getPosY()+gameOffsety, factor, offset);
+        // Ghosts
         int ghostCounter = 1;
         for (Ghost ghost: game.getGhosts()) {
-            collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+            if (ghost.hasCollision() && ghost.canBeEaten()) {
+                collection.getCharacterSprite(gc, "scared", Direction.north, ghostFrame, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+            } else if (!ghost.hasCollision() && !ghost.canBeEaten()) {
+                collection.getCharacterSprite(gc, "dead", ghost.getDirection(), 0, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+            } else {
+                collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame / 2, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+            }
             // the cap on ghostCounter is equal to: the amount of ghost sprites - 1
-            ghostCounter = (ghostCounter > 1) ? 1: ghostCounter + 1;
+            ghostCounter = (ghostCounter > 3) ? 1: ghostCounter + 1;
         }
+        // Pacman
+        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX()+gameOffsetx,game.getPlayer().getPosY()+gameOffsety, factor, offset);
     }
 
     public void incrementFrames() {
@@ -180,52 +190,28 @@ public class Display {
             playerFrame = 0;
         }
         ghostFrame++;
-        if (ghostFrame == 2) {
+        if (ghostFrame == 4) {
             ghostFrame = 0;
         }
-    }
-
-    public void setOffset(int playerTime){
-        this.offset = ((15 - playerTime)/15)*20;
     }
 
     public Canvas getCanvas() {
         return this.canvas;
     }
 
-    private void updatePlayer() {
-        collection.getCharacterSprite(gc, "pacman", game.getPlayer().getDirection(), playerFrame, game.getPlayer().getPosX()+gameOffsetx,game.getPlayer().getPosY()+gameOffsety, factor, offset);
-    }
-
-    private void updateGhosts() {
-        
-    }
-
     private void updateScore() {
-        gc.clearRect(250, 30, 100, 60); //250
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial Black", 20));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText("Score:\n" + game.getScore(), 300, 60);
-        
-        gc.clearRect(40, 60, factor/1.25+30, (factor/1.25)*2);
         gc.fillText("Lives: ", 70, 60);
         switch(game.getLifeCounter()){
             case 2:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
-                gc.fillRect(62,70,factor/1.25,factor/1.25);
-                gc.fillRect(84,70,factor/1.25,factor/1.25);
+                collection.getSprite(gc, "pacman", Direction.east, 0, 30, 70, factor*2);
+                collection.getSprite(gc, "pacman", Direction.east, 0, 60, 70, factor*2);
                 break;
             case 1:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
-                gc.fillRect(62,70,factor/1.25,factor/1.25);  
-                break;
-            case 0:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
-                break;
+                collection.getSprite(gc, "pacman", Direction.east, 0, 30, 70, factor*2);
             default:    
                 break;
         }
@@ -237,6 +223,10 @@ public class Display {
         gc.fillText("Score: " + game.getScore(), 300, 280);
     }
 
-
+    public void showCount(int count) {
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial Black", 100));
+        gc.fillText(count + "", 300, 280);
+    }
 
 }
