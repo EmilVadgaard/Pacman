@@ -42,6 +42,9 @@ public class Display {
         for (int y = 0; y < wallTypes.length; y++) {
             for (int x = 0; x < wallTypes[0].length; x++) {
                 int wallType = wallTypes[y][x];
+                if (wallType == -1){
+                    collection.getEntitySprite(gc,"door",0,x+gameOffsetx,y+gameOffsety,factor);
+                }
                 if (wallType > 0) {
                     collection.getEntitySprite(gc,"walls",wallType,x+gameOffsetx,y+gameOffsety,factor);
                 }
@@ -56,7 +59,9 @@ public class Display {
             for (int x = 0; x < grid.getMap()[0].length; x++){
                 if (grid.getEntity(x, y) == Entity.wall){
                     wallTypes[y][x] = calculateWallType(x, y, grid.getMap());
-                } else {
+                } else if (grid.getEntity(x, y) == Entity.door){
+                    wallTypes[y][x] = -1;
+                }else {
                     wallTypes[y][x] = 0;
                 }
             }
@@ -151,6 +156,9 @@ public class Display {
 
                     collection.getEntitySprite(gc, "pellet", 0, x+gameOffsetx,y+gameOffsety, factor);
 
+                }
+                if (grid.getEntity(x, y) == Entity.bigPellet){
+                    collection.getEntitySprite(gc, "bigPellet", 0, x+gameOffsetx,y+gameOffsety, factor);
                 }
             }
         }
