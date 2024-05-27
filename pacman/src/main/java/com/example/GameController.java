@@ -20,15 +20,17 @@ public class GameController {
     }
 
     public void run(){
-        Timer playerMoveTimer = new Timer(12);
-        Timer ghostMoveTimer = new Timer(12);
-        Timer characterAnimationTimer = new Timer(6);
+        Timer playerMoveTimer = new Timer(game.getPlayer().getSpeed());
+        Timer ghostMoveTimer = new Timer(game.getGhosts().get(0).getSpeed());
+        Timer characterAnimationTimer = new Timer(12);
         Timer ghostWakeTimer = new Timer(300);
+        Timer powerUpTimer = new Timer(2000);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
         timers.add(ghostMoveTimer);
         timers.add(characterAnimationTimer);
         timers.add(ghostWakeTimer);
+        timers.add(powerUpTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 for (Timer t : timers) {
@@ -36,6 +38,7 @@ public class GameController {
                 }
                 display.setOffset(playerMoveTimer.getTime());
 
+                // Player movement events
                 if (playerMoveTimer.getTime() == 0) {
                     if (game.isLegal(game.getPlayer(), desiredDirection)) {
                         game.switchDirection(game.getPlayer(), desiredDirection);
@@ -44,34 +47,51 @@ public class GameController {
                         game.moveCharacter(game.getPlayer());
                     }
                     for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                        if (game.characterCollision(ghost, game.getPlayer())) {
                             game.handleCollision(ghost, game.getPlayer());
                         }
+                    }
+                    if (game.isEatable(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
+                        if (game.isBigPellet(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
+                            powerUpTimer.reset();
+                            // TYPECASTING !!!!!!!!!!!!!!!!!!
+                            ghostMoveTimer.setTime((int)(game.getGhosts().get(0).getSpeed()*1.25));
+                        }
+                        game.eat(game.getPlayer().getPosX(), game.getPlayer().getPosY());
                     }
                     playerMoveTimer.reset();
                 }
 
+                // Ghost movement events
                 if (ghostMoveTimer.getTime() == 0) {
                     game.moveGhosts();
                     for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(game.getPlayer(), ghost)) {
+                        if (game.characterCollision(ghost, game.getPlayer())) {
                             game.handleCollision(ghost, game.getPlayer());
                         }
                     }
                     ghostMoveTimer.reset();
                 }
 
+                // Reset ghosts after a powerup has finished
+                if (powerUpTimer.getTime() == 0) {
+                    game.endPowerUpTime();
+                    ghostMoveTimer.setTime(game.getGhosts().get(0).getSpeed());
+                }
+
+                // Character animation handling
                 if (characterAnimationTimer.getTime() == 0) {
                     display.incrementFrames();
                     characterAnimationTimer.reset();
                 }
                 display.update();
 
-                if (game.hasSleepingGhosts()) {
-                    if (ghostWakeTimer.getTime() == 0) {
-                        game.wakeNextGhost();
-                        ghostWakeTimer.reset();
-                    }
+                if (ghostWakeTimer.getTime() == 0) {
+                    game.wakeNextGhost();
+                    ghostWakeTimer.reset();
+                }
+                if (!game.hasSleepingGhosts()) {
+                    ghostWakeTimer.reset();
                 }
             }
         }.start();
