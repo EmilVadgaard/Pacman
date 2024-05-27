@@ -19,7 +19,7 @@ public class Game implements Ruleset {
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(14, 21, 15);
-        this.lifeCounter = 3;
+        this.lifeCounter = 0;
         this.score = 0;
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
@@ -324,4 +324,21 @@ public class Game implements Ruleset {
          */
         return pellets == 0 || lifeCounter < 0;
     }
+
+    public void resetGame(String filepath){
+        URL url = this.getClass().getResource("/" + filepath);
+        File map = new File(url.getPath());
+        this.grid = new Grid(map);
+        this.player = new Player(14, 21, 15);
+        this.lifeCounter = 2;
+        this.score = 0;
+        this.pellets = countPellets();
+        this.ghosts = new ArrayList<Ghost>();
+        this.multiplier = 1;
+        ghosts.add(new Ghost(12,13,15,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 15, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,15,12, new NormalGhostState(this)));
+        ghosts.add(new Ghost(15,13,15,16, new NormalGhostState(this)));
+    }
+
 }
