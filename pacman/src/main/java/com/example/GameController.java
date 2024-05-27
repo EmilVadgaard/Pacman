@@ -108,7 +108,7 @@ public class GameController {
                     }
 
                     // Reset ghosts after a powerup has finished
-                    if (powerUpTimer.getTime() == 0) {
+                    if (powerUpTimer.getTime() <= 0) {
                         game.endPowerUpTime();
                     }
 

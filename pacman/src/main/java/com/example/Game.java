@@ -191,7 +191,7 @@ public class Game implements Ruleset {
          * Resets all ghosts to their normal state and sets the score multiplier to 1.
          */
         for (Ghost ghost: ghosts) {
-            if (ghost.hasCollision()) {
+            if (ghost.hasCollision() && ghost.canBeEaten()) {
                 ghost.changeState(new NormalGhostState(this));
                 ghost.setSpeed(12);
             }
