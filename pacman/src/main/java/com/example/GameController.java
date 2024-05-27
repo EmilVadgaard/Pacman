@@ -39,13 +39,16 @@ public class GameController {
     public void run(){
         Timer spawnTimer = new Timer(180);
         Timer playerMoveTimer = new Timer(game.getPlayer().getSpeed());
-        Timer ghostMoveTimer = new Timer(game.getGhosts().get(0).getSpeed());
+        //Timer ghostMoveTimer = new Timer(game.getGhosts().get(0).getSpeed());
         Timer characterAnimationTimer = new Timer(12);
         Timer ghostWakeTimer = new Timer(300);
         Timer powerUpTimer = new Timer(600);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
-        timers.add(ghostMoveTimer);
+        for (Ghost ghost: game.getGhosts()) {
+            timers.add(new Timer(ghost.getSpeed()));
+        }
+        //timers.add(ghostMoveTimer);
         timers.add(characterAnimationTimer);
         timers.add(ghostWakeTimer);
         timers.add(powerUpTimer);
@@ -91,14 +94,17 @@ public class GameController {
                     }
 
                     // Ghost movement events
-                    if (ghostMoveTimer.getTime() == 0) {
-                        game.moveGhosts();
-                        for (Ghost ghost: game.getGhosts()) {
-                            if (game.characterCollision(ghost, game.getPlayer())) {
-                                game.handleCollision(ghost, game.getPlayer());
-                            }
+                    int count = 1;
+                    for (Ghost ghost: game.getGhosts()) {
+                        if (timers.get(count).getTime() == 0) {
+                            game.moveGhost(ghost);
+                            timers.get(count).reset();
                         }
-                        ghostMoveTimer.reset();
+                        timers.get(count).setTime(ghost.getSpeed());
+                        count++;
+                        if (game.characterCollision(ghost, game.getPlayer())) {
+                            game.handleCollision(ghost, game.getPlayer());
+                        }
                     }
 
                     // Reset ghosts after a powerup has finished
@@ -146,27 +152,15 @@ public class GameController {
         switch(event.getCode()){
             case UP:
                 this.desiredDirection = Direction.north;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }
                 break;
             case DOWN:
-                this.desiredDirection = Direction.south;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }                
+                this.desiredDirection = Direction.south;  
                 break;
             case RIGHT:
-                this.desiredDirection = Direction.east;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }                
+                this.desiredDirection = Direction.east;     
                 break;
             case LEFT:
                 this.desiredDirection = Direction.west;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }
                 break;
             default:
                 break;
@@ -174,12 +168,10 @@ public class GameController {
     }
 
     public void processResetButton (ActionEvent event){
-        //if(event.getSource() == resetButton){
-            resetButton.setDisable(true);
-            resetButton.setVisible(false);
-            game.resetGame("map.txt");
-            run();
-        //}
+        resetButton.setDisable(true);
+        resetButton.setVisible(false);
+        game.resetGame("map.txt");
+        run();
     }
 
     public Button getResetButton(){

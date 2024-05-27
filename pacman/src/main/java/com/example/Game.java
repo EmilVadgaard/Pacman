@@ -26,10 +26,10 @@ public class Game implements Ruleset {
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
         this.multiplier = 1;
-        ghosts.add(new Ghost(12,13,14,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 14, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,14,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,14,16, new NormalGhostState(this)));
+        ghosts.add(new Ghost(12,13,12,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 12, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,12,12, new NormalGhostState(this)));
+        ghosts.add(new Ghost(15,13,12,16, new NormalGhostState(this)));
     }
 
     public void moveCharacter(Character character){
@@ -69,7 +69,24 @@ public class Game implements Ruleset {
         }
     }
 
-
+    public void moveGhost(Ghost ghost) {
+        /**
+         * Moves a specific ghost one space.
+         */
+        if (!ghost.isSleeping()) {
+            Direction direction = ghost.nextDirection(player.getPosX(), player.getPosY());
+            switchDirection(ghost, direction);
+            // If ghost is in dead state and has reached its home
+            if (!ghost.hasCollision() && ghost.getHomeX() == ghost.getPosX() && ghost.getHomeY() == ghost.getPosY()) {
+                ghost.changeState(new NormalGhostState(this));
+                ghost.setSpeed(12);
+                ghost.sleep();
+                ghost.switchDirection(Direction.north);
+            } else {
+                moveCharacter(ghost);
+            }
+        }
+    }
 
 
     public boolean isLegal(Character character, Direction direction) {
@@ -161,6 +178,7 @@ public class Game implements Ruleset {
             for (Ghost ghost: ghosts) {
                 if (ghost.hasCollision() && !ghost.isSleeping()) {
                     ghost.changeState(new ScaredGhostState(this));
+                    ghost.setSpeed(18);
                 }
             }
         }
@@ -175,10 +193,10 @@ public class Game implements Ruleset {
         for (Ghost ghost: ghosts) {
             if (ghost.hasCollision()) {
                 ghost.changeState(new NormalGhostState(this));
+                ghost.setSpeed(12);
             }
         }
         multiplier = 1;
-
     }
 
     public void switchDirection(Character character, Direction desiredDirection){
@@ -276,6 +294,7 @@ public class Game implements Ruleset {
             addScore(200 * multiplier);
             multiplier = multiplier * 2;
             ghost.changeState(new DeadGhostState(this));
+            ghost.setSpeed(4);
         } else {
             subtractLifeCounter();
             resetCharacters();
@@ -293,6 +312,7 @@ public class Game implements Ruleset {
             ghost.setPos(ghost.getHomeX(), ghost.getHomeY());
             ghost.sleep();
             ghost.changeState(new NormalGhostState(this));
+            ghost.setSpeed(12);
         }
     } 
 
@@ -304,6 +324,9 @@ public class Game implements Ruleset {
     }
 
     public void spawnPlayer() {
+        /**
+         * Sets playerIsSpawned to true.
+         */
         playerIsSpawned = true;
     }
 
@@ -342,6 +365,9 @@ public class Game implements Ruleset {
     }
 
     public void resetGame(String filepath){
+        /**
+         * Resets the entire game.
+         */
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
@@ -351,10 +377,10 @@ public class Game implements Ruleset {
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
         this.multiplier = 1;
-        ghosts.add(new Ghost(12,13,14,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 14, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,14,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,14,16, new NormalGhostState(this)));
+        ghosts.add(new Ghost(12,13,12,6, new NormalGhostState(this)));
+        ghosts.add(new Ghost(13, 13, 12, 10, new NormalGhostState(this)));
+        ghosts.add(new Ghost(14,13,12,12, new NormalGhostState(this)));
+        ghosts.add(new Ghost(15,13,12,16, new NormalGhostState(this)));
     }
 
 }

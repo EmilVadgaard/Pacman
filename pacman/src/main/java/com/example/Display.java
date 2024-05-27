@@ -189,10 +189,6 @@ public class Display {
         }
     }
 
-    public void setOffset(int playerTime){
-        this.offset = ((15 - playerTime)/15)*20;
-    }
-
     public Canvas getCanvas() {
         return this.canvas;
     }
@@ -207,15 +203,9 @@ public class Display {
             case 2:
                 gc.setFill(Color.YELLOW);
                 gc.fillRect(40,70,factor/1.25,factor/1.25);
-                gc.fillRect(62,70,factor/1.25,factor/1.25);
-                gc.fillRect(84,70,factor/1.25,factor/1.25);
-                break;
-            case 1:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
                 gc.fillRect(62,70,factor/1.25,factor/1.25);  
                 break;
-            case 0:
+            case 1:
                 gc.setFill(Color.YELLOW);
                 gc.fillRect(40,70,factor/1.25,factor/1.25);
                 break;
