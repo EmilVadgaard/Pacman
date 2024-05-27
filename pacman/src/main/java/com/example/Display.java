@@ -201,14 +201,11 @@ public class Display {
         gc.fillText("Lives: ", 70, 60);
         switch(game.getLifeCounter()){
             case 2:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
-                gc.fillRect(62,70,factor/1.25,factor/1.25);  
+                collection.getSprite(gc, "pacman", Direction.east, 0, 30, 70, factor*2);
+                collection.getSprite(gc, "pacman", Direction.east, 0, 60, 70, factor*2);
                 break;
             case 1:
-                gc.setFill(Color.YELLOW);
-                gc.fillRect(40,70,factor/1.25,factor/1.25);
-                break;
+                collection.getSprite(gc, "pacman", Direction.east, 0, 30, 70, factor*2);
             default:    
                 break;
         }
