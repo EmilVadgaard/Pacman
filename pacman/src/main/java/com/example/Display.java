@@ -214,18 +214,24 @@ public class Display {
         gc.fillText("Score:\n" + game.getScore(), 300, 60);
         
         switch(game.getLifeCounter()){
-            case 3:
-                break;
             case 2:
-                gc.clearRect(84, 70, factor/1.25, factor/1.25);    
                 break;
             case 1:
-                gc.clearRect(62, 70, factor/1.25+12, factor/1.25);    
+                gc.clearRect(84, 70, factor/1.25, factor/1.25);    
+                break;
+            case 0:
+                gc.clearRect(62, 70, factor/1.25+12+12, factor/1.25);    
                 break;
             default:
                 gc.clearRect(40, 70, factor/1.25+24, factor/1.25);    
                 break;
         }
+    }
+
+    public void ResetScreen() {
+        gc.clearRect(0, 0, 600, 800);
+        gc.setFill(Color.WHITE);
+        gc.fillText("Score: " + game.getScore(), 300, 280);
     }
 
 
