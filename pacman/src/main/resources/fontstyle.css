@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Daydream';
+    src: url('/Daydream.ttf');
+}
+
+.text {
+    -fx-font-family: "Daydream";
+}

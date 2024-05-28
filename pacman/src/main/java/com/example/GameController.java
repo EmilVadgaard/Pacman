@@ -37,9 +37,9 @@ public class GameController {
     }
 
     public void run(){
-        Timer spawnTimer = new Timer(180);
+        Timer spawnTimer = new Timer(120);
         Timer playerMoveTimer = new Timer(game.getPlayer().getSpeed());
-        Timer characterAnimationTimer = new Timer(12);
+        Timer characterAnimationTimer = new Timer(5);
         Timer ghostWakeTimer = new Timer(180);
         Timer powerUpTimer = new Timer(600);
         ArrayList<Timer> timers = new ArrayList<Timer>();
@@ -60,12 +60,8 @@ public class GameController {
                     ghostWakeTimer.decrementTime();
                     if (spawnTimer.getTime() == 0) {
                         game.spawnPlayer();
-                    } else if (spawnTimer.getTime() <= 60) {
-                        display.showCount(1);
-                    } else if (spawnTimer.getTime() <= 120) {
-                        display.showCount(2);
-                    } else if (spawnTimer.getTime() <= 180) {
-                        display.showCount(3);
+                    } else {
+                        display.showReady();
                     }
                 } else {
                     for (Timer t : timers) {
@@ -87,6 +83,7 @@ public class GameController {
                         if (game.isEatable(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
                             if (game.isBigPellet(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
                                 powerUpTimer.reset();
+                                display.setPowerupRunningOut(false);
                             }
                             game.eat(game.getPlayer().getPosX(), game.getPlayer().getPosY());
                         }
@@ -108,8 +105,12 @@ public class GameController {
                     }
 
                     // Reset ghosts after a powerup has finished
+                    if (powerUpTimer.getTime() <= 180) {
+                        display.setPowerupRunningOut(true);
+                    }
                     if (powerUpTimer.getTime() <= 0) {
                         game.endPowerUpTime();
+                        display.setPowerupRunningOut(false);
                     }
 
                     // Character animation handling
@@ -123,16 +124,17 @@ public class GameController {
                         ghostWakeTimer.reset();
                     }
 
-                    if (!game.hasSleepingGhosts()) {
-                        ghostWakeTimer.reset();
-                    }
                     if (!game.playerIsSpawned()) {
                         spawnTimer.reset();
                     }
 
                     if (game.isGameOver()){
                         stop();
-                        display.showResetMenu();
+                        if (game.getLifeCounter() < 0) {
+                            display.showResetMenu("Game Over.");
+                        } else {
+                            display.showResetMenu("YOU WIN!");
+                        }
                         resetButton.setVisible(true);
                         resetButton.setDisable(false);
                     }

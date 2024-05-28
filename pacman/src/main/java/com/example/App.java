@@ -27,7 +27,6 @@ public class App extends Application {
     private static Stage stage;
     private GameController gameController;
     Display display;
-    Button testButton = new Button("Test");
 
 
     @Override
@@ -38,14 +37,11 @@ public class App extends Application {
         display = gameController.getDisplay();
         
         root.getChildren().addAll(display.getCanvas(), gameController.getResetButton());
-        //root.getChildren().add(gameController.getResetButton());
-        //root.getChildren().add(testButton);
+
 
         Scene scene = new Scene(root, 600, 650, Color.BLACK);
-        
-        testButton.setCancelButton(true);
-        testButton.setOnAction(this::processTestButton);
 
+        scene.getStylesheets().add(getClass().getResource("/fontstyle.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Pacman");
         
@@ -56,27 +52,6 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-    }
-
-    public void reset(Stage stage){
-        root.getChildren().removeAll(display.getCanvas());
-
-        
-    }
-
-
-    public void processTestButton (ActionEvent event){
-        if(event.getSource() == testButton){
-            gameController = new GameController();
-            root.getChildren().add(display.getCanvas());
-            System.out.print("Test3");
-           // reset(stage);
-            System.out.print("Test2");
-            //start(new Stage());
-            //stage.close();
-
-
-        }
     }
 
 }

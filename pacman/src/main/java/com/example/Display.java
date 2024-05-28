@@ -5,6 +5,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.Font;
 
+import java.net.URL;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color; //Baggrund farve
@@ -26,7 +28,7 @@ public class Display {
     Canvas canvas;
     GraphicsContext gc;
 
-    Circle pellet;
+    boolean powerupRunningOut;
 
     public Display(Game game){
         this.game = game;
@@ -34,7 +36,7 @@ public class Display {
         this.gc = canvas.getGraphicsContext2D();
         this.playerFrame = 0;
         this.ghostFrame = 0;
-    
+        this.powerupRunningOut = false;
         addWalls();
     }
 
@@ -171,8 +173,12 @@ public class Display {
         int ghostCounter = 1;
         for (Ghost ghost: game.getGhosts()) {
             if (ghost.hasCollision() && ghost.canBeEaten()) {
-                collection.getCharacterSprite(gc, "scared", Direction.north, ghostFrame, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
-            } else if (!ghost.hasCollision() && !ghost.canBeEaten()) {
+                if (powerupRunningOut) {
+                    collection.getCharacterSprite(gc, "scared", Direction.north, ghostFrame, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+                } else {
+                    collection.getCharacterSprite(gc, "scared", Direction.north, ghostFrame / 2, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
+                }
+                } else if (!ghost.hasCollision() && !ghost.canBeEaten()) {
                 collection.getCharacterSprite(gc, "dead", ghost.getDirection(), 0, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
             } else {
                 collection.getCharacterSprite(gc, "ghost" + ghostCounter, ghost.getDirection(), ghostFrame / 2, ghost.getPosX()+gameOffsetx,ghost.getPosY()+gameOffsety, factor, offset);
@@ -199,9 +205,13 @@ public class Display {
         return this.canvas;
     }
 
+    public void setPowerupRunningOut(boolean bool) {
+        powerupRunningOut = bool;
+    }
+
     private void updateScore() {
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial Black", 20));
+        gc.setFont(Font.font("Daydream"));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText("Score:\n" + game.getScore(), 300, 60);
         gc.fillText("Lives: ", 70, 60);
@@ -217,15 +227,20 @@ public class Display {
         }
     }
 
-    public void showResetMenu() {
+    public void showResetMenu(String message) {
         gc.clearRect(0, 0, 600, 800);
         gc.setFill(Color.WHITE);
         gc.fillText("Score: " + game.getScore(), 300, 280);
+        gc.fillText(message, 300, 240);
+    }
+
+    public void showReady() {
+        gc.setFill(Color.YELLOW);
+        gc.fillText("Ready!", 300, 340);
     }
 
     public void showCount(int count) {
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial Black", 100));
         gc.fillText(count + "", 300, 280);
     }
 
