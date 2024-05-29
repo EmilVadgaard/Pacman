@@ -3,15 +3,26 @@ package com.example;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
+/**
+ * An implementation of the Breadth First Search algorithm.
+ */
 public class BreadthFirstSearch implements SearchAlgorithm{
-    Ruleset ruleset;
-    boolean collision;
+    private Ruleset ruleset;
+    private boolean collision;
 
+    /**
+     * 
+     * @param ruleset Transition model for the search algorithm
+     * @param collision Whether or not the search algorithm should look for paths phasing through certain entities.
+     */
     public BreadthFirstSearch(Ruleset ruleset, boolean collision) {
         this.ruleset = ruleset;
         this.collision = collision;
     }
 
+    /**
+     * Finds the initial direction of the optimal path from the start position to the goal position.
+     */
     public Direction search(int startX, int startY, int goalX, int goalY) {
         Node node = new Node(startX, startY, null);
         if (node.getPosX() == goalX && node.getPosY() == goalY) {
@@ -36,6 +47,10 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         return null;
     }
 
+    /*
+     * Calculates all the valid direction to move from a certain position and adds them to a Node's list
+     * of children.
+     */
     private void expand(Node node) {
         int[] north = ruleset.nextPosition(node.getPosX(), node.getPosY(), Direction.north, collision);
         // check if next position exists / is legal
@@ -72,12 +87,15 @@ public class BreadthFirstSearch implements SearchAlgorithm{
         }
     }
 
+    /*
+     * Node used in the search tree.
+     */
     private class Node {
-        protected int posX;
-        protected int posY;
-        protected Direction initialDirection;
-        protected ArrayList<Node> children;
-        protected String key;
+        private int posX;
+        private int posY;
+        private Direction initialDirection;
+        private ArrayList<Node> children;
+        private String key;
 
         private Node(int posX, int posY, Direction initialDirection) {
             this.posX = posX;
@@ -87,24 +105,27 @@ public class BreadthFirstSearch implements SearchAlgorithm{
             this.key = posX + " " + posY;
         }
 
-        public void addChild(Node child) {
+        private void addChild(Node child) {
             children.add(child);
         }
 
-        public ArrayList<Node> getChildren() {
+        private ArrayList<Node> getChildren() {
             return children;
         }
 
-        public int getPosX() {
+        private int getPosX() {
             return posX;
         }
-        public int getPosY() {
+
+        private int getPosY() {
             return posY;
         }
-        public String getKey() {
+
+        private String getKey() {
             return key;
         }
-        public Direction getDirection() {
+
+        private Direction getDirection() {
             return this.initialDirection;
         }
     }

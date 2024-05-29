@@ -2,9 +2,11 @@ package com.example;
 
 import java.net.URL;
 import java.io.File;
-import java.util.Random;
 import java.util.ArrayList;
 
+/**
+ * The class responsible for all the logic of the Pac-man game.
+ */
 public class Game implements Ruleset {
     private Grid grid;
     private Player player;
@@ -13,29 +15,42 @@ public class Game implements Ruleset {
     private int pellets;
     private int multiplier;
     private ArrayList<Ghost> ghosts;
-    private boolean playerIsSpawned;
+    private boolean playerIsDead;
 
+    /**
+     * Returns a new instance of the Pac-man game.
+     * @param filepath A valid filepath to a .txt file that has even length lines.
+     */
     public Game(String filepath){
+        resetGame(filepath);
+    }
+
+    /**
+     * Resets the entire game.
+     * @param filepath A valid filepath to a .txt file that has even length lines.
+     */
+    public void resetGame(String filepath){
         URL url = this.getClass().getResource("/" + filepath);
         File map = new File(url.getPath());
         this.grid = new Grid(map);
         this.player = new Player(14, 21, 10);
-        this.playerIsSpawned = false;
         this.lifeCounter = 2;
         this.score = 0;
         this.pellets = countPellets();
         this.ghosts = new ArrayList<Ghost>();
         this.multiplier = 1;
-        ghosts.add(new Ghost(12,13,10,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 10, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,10,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,10,16, new NormalGhostState(this)));
+        this.playerIsDead = true;
+        this.ghosts.add(new Ghost(12,13,10,6, new NormalGhostState(this)));
+        this.ghosts.add(new Ghost(13, 13, 10, 12, new NormalGhostState(this)));
+        this.ghosts.add(new Ghost(14,13,10,18, new NormalGhostState(this)));
+        this.ghosts.add(new Ghost(15,13,10,24, new NormalGhostState(this)));
     }
 
+    /**
+     * Moves a given character one space in the direction they are facing.
+     * @param character The character which needs to be moved.
+     */
     public void moveCharacter(Character character){
-        /**
-         * Moves a given character one space in the direction they are facing.
-         */
         if (character.getPosX() == grid.getLengthX() - 1 && character.getDirection() == Direction.east) {
             character.setPos(0, character.getPosY());
         } else if (character.getPosX() == 0 && character.getDirection() == Direction.west) {
@@ -49,10 +64,10 @@ public class Game implements Ruleset {
         }
     }
 
+    /**
+     * Moves all the ghosts one space.
+     */
     public void moveGhosts() {
-        /**
-         * Moves all the ghosts one space.
-         */
         for (Ghost ghost: ghosts) {
             if (!ghost.isSleeping()) {
                 Direction direction = ghost.nextDirection(player.getPosX(), player.getPosY());
@@ -69,10 +84,11 @@ public class Game implements Ruleset {
         }
     }
 
+    /**
+     * Moves a specific ghost one space.
+     * @param ghost The specific ghost which needs to be moved.
+     */
     public void moveGhost(Ghost ghost) {
-        /**
-         * Moves a specific ghost one space.
-         */
         if (!ghost.isSleeping()) {
             Direction direction = ghost.nextDirection(player.getPosX(), player.getPosY());
             switchDirection(ghost, direction);
@@ -89,23 +105,29 @@ public class Game implements Ruleset {
         }
     }
 
-
+    /**
+     * Returns true if the given character can move in the given direction.
+     * @param character The character which is being moved.
+     * @param direction Direction of the character.
+     * @return True if the movement in the specified direction is allowed.
+     */
     public boolean isLegal(Character character, Direction direction) {
-        /**
-         * Returns true if the given character can move in the given direction.
-         */
         if (direction == null) {
             return false;
         }
         return nextPosition(character.getPosX(), character.getPosY(), direction, character.hasCollision()) != null;
     }
 
+    /**
+     * Returns the following position if a move would be made from the specific position and in the specific direction.
+     * @param posX X-value position.
+     * @param posY Y-value position.
+     * @param direction Direction from the position.
+     * @param hasCollision false if certain object should be seen as empty spaces.
+     * @return an array of lenth 2, with the first as the x value and the second as the y value of a position.
+     * @return null if is outside of the movable area.
+     */
     public int[] nextPosition(int posX, int posY, Direction direction, boolean hasCollision) {
-        /**
-         * Returns the next position of a move as an integer array of length 2.
-         * Returns null if the move is illegal.
-         * If character is corporeal doors are seen as empty spaces
-         */
         int[] coords = new int[2];
         switch(direction) {
             case north:
@@ -152,30 +174,40 @@ public class Game implements Ruleset {
         }
     }
 
+    /**
+     * Returns true if the entity at the coordinates given can be eaten.
+     * @param x X-value position.
+     * @param y Y-value position.
+     * @return True if the position has a pellet or big pellet.
+     */
     public boolean isEatable(int x, int y) {
-        /**
-         * Returns true if the entity at the coordinates given can be eaten.
-         */
         return grid.getEntity(x, y) == Entity.pellet || grid.getEntity(x, y) == Entity.bigPellet;
     }
 
+    /**
+     * Returns true if the entity at the coordinates is a big pellet.
+     * @param x X-value position.
+     * @param y Y-value position.
+     * @return True if position has a big pellet.
+     */
     public boolean isBigPellet(int x, int y) {
-        /**
-         * Returns true if the entity at the coordinates is a big pellet.
-         */
         return grid.getEntity(x, y) == Entity.bigPellet;
     }
 
+    /**
+     * Removes an entity from the game grid, and adds score corresponding to the
+     * entity removed.
+     * Changes the gamestate to power state, if a big pellet is eaten. 
+     * @param x X-value position.
+     * @param y Y-value position.
+     */
     public void eat(int x, int y) {
-        /**
-         * Removes an entity from the game grid, and adds score corresponding to the
-         * entity removed.
-         * Changes the gamestate to power state, if a big pellet is eaten. 
-         */
         if (grid.getEntity(x, y) == Entity.pellet) {
             addScore(10);
+            pellets--;
         } else if (grid.getEntity(x, y) == Entity.bigPellet) {
             addScore(50);
+            pellets--;
             for (Ghost ghost: ghosts) {
                 if (ghost.hasCollision()) {
                     ghost.changeState(new ScaredGhostState(this));
@@ -184,13 +216,12 @@ public class Game implements Ruleset {
             }
         }
         grid.setEntity(x,y,Entity.empty);
-        pellets--;
     }
 
+    /**
+     * Resets all ghosts to their normal state and sets the score multiplier to 1.
+     */
     public void endPowerUpTime() {
-        /**
-         * Resets all ghosts to their normal state and sets the score multiplier to 1.
-         */
         for (Ghost ghost: ghosts) {
             if (ghost.hasCollision() && ghost.canBeEaten()) {
                 ghost.changeState(new NormalGhostState(this));
@@ -200,31 +231,36 @@ public class Game implements Ruleset {
         multiplier = 1;
     }
 
+    /**
+     * Changes a given character's direction.
+     * @param character The character whose direction will be changed.
+     * @param desiredDirection The new direction.
+     */
     public void switchDirection(Character character, Direction desiredDirection){
-        /**
-         * Changes a given character's direction.
-         */
         character.switchDirection(desiredDirection);
     }
 
+    /**
+     * Returns a given character's current direction.
+     * @param character The character
+     * @return Direction of character.
+     */
     public Direction getCharacterDirection(Character character){
-        /**
-         * Returns a given character's current direction.
-         */
         return character.getDirection();
     }
 
+    /**
+     * Returns the current game grid.
+     * @return Grid of game.
+     */
     public Grid getGrid() {
-        /**
-         * Returns the current game grid.
-         */
         return this.grid;
     }
 
-    private int countPellets() {
-        /*
-         * Counts the pellets in the grid.
-         */
+    /*
+     * Counts the pellets in the grid.
+     */
+    private int countPellets() { 
         int pellets = 0;
         for (int y = 0; y < grid.getLengthY(); y++) {
             for (int x = 0; x < grid.getLengthX(); x++) {
@@ -236,24 +272,27 @@ public class Game implements Ruleset {
         return pellets;
     }
 
-    public Player getPlayer() {
-        /**
-         * Returns the player character.
-         */
+    /**
+     * Returns the player character.
+     * @return The player.
+     */
+    public Player getPlayer() {     
         return player;
     }
 
+    /**
+     * Returns the ghost characters.
+     * @return An array of ghost characters.
+     */
     public ArrayList<Ghost> getGhosts() {
-        /**
-         * Returns the ghost characters.
-         */
         return ghosts;
     }
 
+    /**
+     * Returns true if atleast one of the game's ghosts are sleeping.
+     * @return True if one or more ghosts are sleeping.
+     */
     public boolean hasSleepingGhosts() {
-        /**
-         * Returns true if atleast one of the game's ghosts are sleeping.
-         */
         for (Ghost ghost: ghosts) {
             if (ghost.isSleeping()) {
                 return true;
@@ -262,10 +301,10 @@ public class Game implements Ruleset {
         return false;
     }
 
+    /**
+     * Wakes the next sleeping ghost in the order of their instantiation.
+     */
     public void wakeNextGhost() {
-        /**
-         * Wakes the next ghost in the order of their instantiation.
-         */
         boolean haveAwoken = false;
         for (Ghost ghost: ghosts) {
             if (ghost.isSleeping() && !haveAwoken) {
@@ -276,10 +315,13 @@ public class Game implements Ruleset {
         }
     }
 
+    /**
+     * Returns true if a ghost and another character are in the exact same position.
+     * @param ghost The ghost.
+     * @param player The player.
+     * @return True if player has a collision with the ghost.
+     */
     public boolean characterCollision(Ghost ghost, Character player) {
-        /**
-         * Returns true if a ghost and another character are in the exact same position.
-         */
         if (ghost.hasCollision()) {
             return ghost.getPosX() == player.getPosX() && ghost.getPosY() == player.getPosY();
         } else {
@@ -287,10 +329,12 @@ public class Game implements Ruleset {
         }
     }
 
+    /**
+     * Kills the given ghost if it can be eaten, kills the player otherwise.
+     * @param ghost The ghost.
+     * @param player The player.
+     */
     public void handleCollision(Ghost ghost, Character player) {
-        /**
-         * Kills the given ghost if it can be eaten, kills the player otherwise.
-         */
         if (ghost.canBeEaten()) {
             addScore(200 * multiplier);
             multiplier = multiplier * 2;
@@ -299,15 +343,15 @@ public class Game implements Ruleset {
         } else {
             subtractLifeCounter();
             resetCharacters();
-            playerIsSpawned = false;
+            playerIsDead = true;
             multiplier = 1;
         }
     }
 
+    /**
+     * Resets all character's positions, and returns ghosts to their normal state.
+     */
     public void resetCharacters() {
-        /**
-         * Resets all character's positions, and returns ghosts to their normal state.
-         */
         player.setPos(14, 21);
         player.switchDirection(Direction.west);
         for (Ghost ghost: ghosts) {
@@ -319,72 +363,58 @@ public class Game implements Ruleset {
         }
     } 
 
-    public boolean playerIsSpawned() {
-        /**
-         * Returns true if player is dead.
-         */
-        return playerIsSpawned;
+    /**
+     * Returns true if player is dead.
+     * @return True if player is dead.
+     */
+    public boolean isPlayerDead() {  
+        return playerIsDead;
     }
 
+    /**
+     * Sets spawns the player.
+     */
     public void spawnPlayer() {
-        /**
-         * Sets playerIsSpawned to true.
-         */
-        playerIsSpawned = true;
+        playerIsDead = false;
     }
 
+    /**
+     * Returns the current amount of extra lives the player has.
+     * @return Life count.
+     */
     public int getLifeCounter() {
-        /**
-         * Returns the current amount of lives the player has.
-         */
         return lifeCounter;
     }
+
+    /**
+     * Returns the current score.
+     * @return Score count.
+     */
     public int getScore(){
-        /**
-         * Returns the current score.
-         */
+        
         return score;
     }
 
-    public void subtractLifeCounter(){
-        /**
-         * Removes a single life from the player.
-         */
+    /*
+     * Removes a single life from the player.
+     */
+    private void subtractLifeCounter(){
         lifeCounter--;
     }
     
-    public void addScore(int n){
-        /**
-         * Adds to the current score.
-         */
+    /**
+     * Adds to the current score.
+     * @param n Amount of points added to score
+     */
+    public void addScore(int n){   
         score = score + n;
     }
 
+    /**
+     * Returns true if there are no more pellets to be eaten, or if the player has no remaining lives.
+     * @return True if there are no pellets or life counter is under 0.
+     */
     public boolean isGameOver() {
-        /**
-         * Returns true if there are no more pellets to be eaten, or if the player has no remaining lives.
-         */
         return pellets == 0 || lifeCounter < 0;
     }
-
-    public void resetGame(String filepath){
-        /**
-         * Resets the entire game.
-         */
-        URL url = this.getClass().getResource("/" + filepath);
-        File map = new File(url.getPath());
-        this.grid = new Grid(map);
-        this.player = new Player(14, 21, 10);
-        this.lifeCounter = 2;
-        this.score = 0;
-        this.pellets = countPellets();
-        this.ghosts = new ArrayList<Ghost>();
-        this.multiplier = 1;
-        this.playerIsSpawned = false;
-        ghosts.add(new Ghost(12,13,10,6, new NormalGhostState(this)));
-        ghosts.add(new Ghost(13, 13, 10, 10, new NormalGhostState(this)));
-        ghosts.add(new Ghost(14,13,10,12, new NormalGhostState(this)));
-        ghosts.add(new Ghost(15,13,10,16, new NormalGhostState(this)));
-    }
-
 }

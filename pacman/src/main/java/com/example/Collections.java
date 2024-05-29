@@ -6,20 +6,36 @@ import java.util.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+/**
+* A system to conveniently retrieve sprites from sprite.
+* The system work by calling a function related to desired output.
+* Then inputing keys that match with the desired sprite.
+* The system is based on nested dictionaries, and everything therefore works in constant time.
+*/
 public class Collections implements SpriteCollections{
 
     private class Sprite {
-        int x;
-        int y;
-        int size;
-    
-        public Sprite(int x, int y, int size){
+        private int x;
+        private int y;
+        private int size;
+        
+        /**
+         * Returns a new instance Sprite.
+         * @param x X-value position.
+         * @param y Y-value position.
+         * @param size Size of sprite.
+         */
+        private Sprite(int x, int y, int size){
             this.x = x;
             this.y = y;
             this.size = size;
         }
-    
-        public int[] get(){
+
+        /**
+         * @return The coordinate of the sprite
+         * as an array of length 2 with coordinates.
+         */
+        private int[] get(){
             int[] res = {x,y, size};
             return res;
         }
@@ -41,7 +57,11 @@ public class Collections implements SpriteCollections{
     private Map<Integer, Sprite> pellet;
     private Map<Integer, Sprite> bigPellet;
     private Map<Integer, Sprite> door;
-
+    
+    /**
+     * Creates and instance of Collections
+     * Initiates the dictionasies, and places them in the correct order.
+     */
     public Collections(Image spriteSheetPath){
         this.spriteSheet = spriteSheetPath;
         this.characterCollection = new HashMap<>();
@@ -76,6 +96,9 @@ public class Collections implements SpriteCollections{
         initializeSprites();
     }
     
+    /*
+     * Places all sprites in their corrosponding dictionary.
+     */
     private void initializeSprites(){
         Sprite[] pacmanNorth = new Sprite[4];
         pacmanNorth[0] = new Sprite(454, 0+32, 16);
@@ -268,7 +291,15 @@ public class Collections implements SpriteCollections{
 
     }
 
-    public void getEntitySprite(GraphicsContext gc, String group, int type, int x, int y, int factor){
+    /**
+     * Draws the related entity sprite to given GraphicsContext based on inputed keys, type, screen position and size.
+     * @param gc GraphicsContext that is being drawn on.
+     * @param group Specifies which character the desired sprite is.
+     * @param type The type of the desired sprite. 
+     * @param frame Specifies which frame of the animation.
+     * @param factor Sets the size of the sprite. Note it should correspond to factor size of display.
+     */
+    public void drawEntitySprite(GraphicsContext gc, String group, int type, int x, int y, int factor){
         Sprite sprite = entityCollection.get(group).get(type);
 
         if (sprite != null){    
@@ -276,7 +307,17 @@ public class Collections implements SpriteCollections{
         }        
     }
 
-    public void getCharacterSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int factor, int offset){
+    /**
+     * Draws the related character sprite to given GraphicsContext based on inputed keys, frame, screen position and size.
+     * @param gc GraphicsContext that is being drawn on.
+     * @param group Specifies which character the desired sprite is.
+     * @param type The direction of the desired sprite. 
+     * @param frame Specifies which frame of the animation.
+     * @param x X-value position.     
+     * @param y Y-value position.
+     * @param factor Sets the size of the sprite. Note it should correspond to factor size of display.
+     */
+    public void drawCharacterSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int factor){
         Sprite sprite = characterCollection.get(group).get(type)[frame];
         
         if (sprite != null){    
@@ -284,18 +325,31 @@ public class Collections implements SpriteCollections{
         }
     }
 
-    //character
-    public void getSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int size){
+    /**
+     * Draws the related character sprite to given GraphicsContext based on inputed keys, frame, screen position and size.
+     * @param gc GraphicsContext that is being drawn on.
+     * @param group Specifies which character the desired sprite is.
+     * @param type The direction of the desired sprite. 
+     * @param frame Specifies which frame of the animation.
+     * @param x X-value position.
+     * @param y Y-value position.
+     * @param size Size of the sprite.
+     */
+    public void drawSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int size){
         Sprite sprite = characterCollection.get(group).get(type)[frame];
-        
-        
         if (sprite != null){    
             gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], x, y, size, size);
         }
     }
 
-    //entity
-    public void getSprite(GraphicsContext gc, String group, int type, int x, int y, int size){
+    /**
+     * Draws the related entity sprite to given GraphicsContext based on inputed keys, type, screen position and size.
+     * @param gc GraphicsContext that is being drawn on.
+     * @param group specifies which character the desired sprite is.
+     * @param type the type of the desired sprite. 
+     * @param factor sets the size of the sprite. Note it should correspond to factor size of display.
+     */
+    public void drawSprite(GraphicsContext gc, String group, int type, int x, int y, int size){
         Sprite sprite = entityCollection.get(group).get(type);
         
         

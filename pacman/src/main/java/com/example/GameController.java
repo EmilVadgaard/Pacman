@@ -4,20 +4,22 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import java.util.ArrayList;
-import javafx.stage.Stage;
 
+/**
+ * The class used for running the game loop of Pac-man.
+ */
 public class GameController {
     private Display display;
     private Game game;
     private Button resetButton;
     private Direction desiredDirection;
     
-    
-
+    /**
+     * Creates an instance of GameController.
+     */
     public GameController() {
         this.game = new Game("map.txt");
         this.display = new Display(this.game);
@@ -28,12 +30,15 @@ public class GameController {
         resetButton.setLayoutY(320);
         resetButton.setVisible(false);
         resetButton.setDisable(true);
-        //resetButton.setCancelButton(true);
+        resetButton.setCancelButton(true);
         Font buttonFont = Font.font("Courier New", FontWeight.BOLD, 17);
         resetButton.setFont(buttonFont);
         resetButton.setOnAction(this::processResetButton);
     }
 
+    /**
+     * Starts the game-loop.
+     */
     public void run(){
         Timer spawnTimer = new Timer(120);
         Timer playerMoveTimer = new Timer(game.getPlayer().getSpeed());
@@ -53,7 +58,7 @@ public class GameController {
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 // Timer so game does not start instantly
-                if (!game.playerIsSpawned()) {
+                if (game.isPlayerDead()) {
                     spawnTimer.decrementTime();
                     ghostWakeTimer.decrementTime();
                     if (spawnTimer.getTime() == 0) {
@@ -122,7 +127,7 @@ public class GameController {
                         ghostWakeTimer.reset();
                     }
 
-                    if (!game.playerIsSpawned()) {
+                    if (game.isPlayerDead()) {
                         spawnTimer.reset();
                     }
 
@@ -144,6 +149,10 @@ public class GameController {
         }.start();
     }
 
+    /**
+     * Converts arrow key input to desired direction.
+     * @param event Keyinput from user
+     */
     public void handleKeyPress(KeyEvent event) {
         switch(event.getCode()){
             case UP:
@@ -163,10 +172,17 @@ public class GameController {
         }
     }
 
+    /**
+     * @return The display.
+     */
     public Display getDisplay() {
         return this.display;
     }
 
+    /**
+     * Takes button input and resets the game.
+     * @param event Button input from 'resetButton'
+     */
     public void processResetButton (ActionEvent event){
         resetButton.setDisable(true);
         resetButton.setVisible(false);
@@ -174,6 +190,9 @@ public class GameController {
         run();
     }
 
+    /**
+     * @return The reset button.
+     */
     public Button getResetButton(){
         return resetButton;
     }

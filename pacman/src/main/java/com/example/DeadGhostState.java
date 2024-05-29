@@ -1,35 +1,46 @@
 package com.example;
 
+/**
+ * Behavior for a ghost when it has been eaten.
+ */
 public class DeadGhostState implements GhostState {
-    Ruleset ruleset;
-    SearchAlgorithm bfs;
+    private SearchAlgorithm bfs;
 
+    /**
+     * Sets up the state for ghost, according to the dead state.
+     */
     public DeadGhostState(Ruleset ruleset) {
-        this.ruleset = ruleset;
         this.bfs = new BreadthFirstSearch(ruleset,hasCollision());
     }
 
-    public boolean canBeEaten() {
-        /**
-         * Always returns false.
-         */
+    /**
+     * Answers whether ghost can be eaten
+     * @return always false
+     */
+    public boolean canBeEaten() {    
         return false;
     }
 
-    public boolean hasCollision() {
-        /**
-         * Always returns false
-         */
+    /**
+     * Answers whether ghost has collision
+     * @return always false
+     */
+    public boolean hasCollision() {    
         return false;
     }
 
-    // In reality this method should not be run on every single step the ghost takes,
-    // but rather once and have every step of the optimal path saved.
-    public Direction nextDirection(int posX, int posY, int goalX, int goalY, int homeX, int homeY, int intelligence,
+    /**
+     * @param posX Current x-value position.
+     * @param posY Current y-value position.
+     * @param playerX To x-value position.
+     * @param playerY To y-value position.
+     * @param homeX X-value position for home.
+     * @param homeY Y-value position for home.
+     * @param intelligence Value of intelligence for ghost.
+     * @return The calculated next direction for the ghost to move.
+     */
+    public Direction nextDirection(int posX, int posY, int playerX, int playerY, int homeX, int homeY, int intelligence,
             Direction currentDirection) {
-        /**
-         * Returns the direction that is directly towards the ghost's home.
-         */
         return bfs.search(posX, posY, homeX, homeY);
     }
     

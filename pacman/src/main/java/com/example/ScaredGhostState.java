@@ -2,12 +2,19 @@ package com.example;
 
 import java.util.Random;
 
+/**
+* The behavior for a ghost when it has not been eaten and the game is in powerup state.
+*/
 public class ScaredGhostState implements GhostState{
     private Ruleset ruleset;
     private SearchAlgorithm bfs;
     private Random numberGenerator;
     private boolean shocked;
 
+    
+    /**
+     * Sets up the state for ghost, according to the scared state.
+     */
     public ScaredGhostState(Ruleset ruleset) {
         this.ruleset = ruleset;
         this.bfs = new BreadthFirstSearch(ruleset,hasCollision());
@@ -15,38 +22,46 @@ public class ScaredGhostState implements GhostState{
         this.shocked = true;
     }
 
+    /**
+     * Returns whether ghost can be eaten
+     * @return Always true
+     */
     public boolean canBeEaten() {
-        /**
-         * Always returns true
-         */
         return true;
     }
 
+    /**
+     * Returns whether ghost has collision
+     * @return Always true
+     */
     public boolean hasCollision() {
-        /**
-         * Alwaus returns true
-         */
         return true;
     }
 
-    public Direction nextDirection(int posX, int posY, int goalX, int goalY, int homeX, int homeY, int intelligence,
+    /**
+     * @param posX Current x-value position.
+     * @param posY Current y-value position.
+     * @param playerX Players x-value position.
+     * @param playerY Players y-value position.
+     * @param homeX X-value position for home.
+     * @param homeY Y-value position for home.
+     * @param intelligence Value of intelligence for ghost.
+     * @return The calculated next direction for the ghost to move.
+     * Picks a random direction but tries not to go towards the player if possible.
+     */
+    public Direction nextDirection(int posX, int posY, int playerX, int playerY, int homeX, int homeY, int intelligence,
                                    Direction currentDirection) {
-        /**
-         * Calculates the next direction for the ghost to move.
-         * Picks a random direction but tries not to go towards the player if possible.
-         */
-                                    
         if (shocked) {
-            return initialDirection(posX, posY, goalX, goalY);
+            return initialDirection(posX, posY, playerX, playerY);
         } else {
-            return consecutiveDirection(posX, posY, goalX, goalY, currentDirection, 0, intelligence);
+            return consecutiveDirection(posX, posY, playerX, playerY, currentDirection, 0, intelligence);
         }
     }
 
-    private Direction initialDirection(int posX, int posY, int goalX, int goalY) {
-        /*
-         * Returns a random direction that is away from the player.
-         */
+    /*
+     * Returns a random direction that is away from the player.
+     */
+    private Direction initialDirection(int posX, int posY, int playerX, int playerY) {
         Direction direction = null;
         switch(numberGenerator.nextInt(4)) {
             case 0:
@@ -66,21 +81,21 @@ public class ScaredGhostState implements GhostState{
         }
 
         if (ruleset.nextPosition(posX, posY, direction, hasCollision()) == null) {
-            return initialDirection(posX, posY, goalX, goalY);
-        } else if (direction == bfs.search(posX, posY, goalX, goalY)) {
-            return initialDirection(posX, posY, goalX, goalY);
+            return initialDirection(posX, posY, playerX, playerY);
+        } else if (direction == bfs.search(posX, posY, playerX, playerY)) {
+            return initialDirection(posX, posY, playerX, playerY);
         } else {
             shocked = false;
             return direction;
         }
     }
 
-    private Direction consecutiveDirection(int posX, int posY, int goalX, int goalY, Direction currentDirection, 
-                                           int count, int intelligence) {
-        /*
-         * Returns a random direction that is away from the player if possible, but will never return a direction
-         * that is a 180 degree turn from the previous direction.
-         */
+    /*
+     * Returns a random direction that is away from the player if possible, but will never return a direction
+     * that is a 180 degree turn from the previous direction.
+     */
+    private Direction consecutiveDirection(int posX, int posY, int playerX, int playerY, Direction currentDirection, 
+                                           int count, int intelligence) {  
         Direction direction = null;
         switch(numberGenerator.nextInt(4)) {
             case 0:
@@ -100,20 +115,20 @@ public class ScaredGhostState implements GhostState{
         }
 
         if (ruleset.nextPosition(posX, posY, direction, hasCollision()) == null) {
-            return consecutiveDirection(posX, posY, goalX, goalY, currentDirection, count + 1, intelligence);
-        } else if (direction == bfs.search(posX, posY, goalX, goalY) && count < intelligence) {
-            return consecutiveDirection(posX, posY, goalX, goalY, currentDirection, count + 1, intelligence);
+            return consecutiveDirection(posX, posY, playerX, playerY, currentDirection, count + 1, intelligence);
+        } else if (direction == bfs.search(posX, posY, playerX, playerY) && count < intelligence) {
+            return consecutiveDirection(posX, posY, playerX, playerY, currentDirection, count + 1, intelligence);
         } else if (is180(currentDirection, direction)) {
-            return consecutiveDirection(posX, posY, goalX, goalY, currentDirection, count + 1, intelligence);
+            return consecutiveDirection(posX, posY, playerX, playerY, currentDirection, count + 1, intelligence);
         } else {
             return direction;
         }
     }
 
-    private boolean is180(Direction oldDir, Direction newDir) {
-        /*
-         * Checks whether two direction are opposite of eachother.
-         */
+    /*
+     * Checks whether two directions are opposite of eachother.
+     */
+    private boolean is180(Direction oldDir, Direction newDir) {  
         switch(oldDir) {
            case north:
                return newDir == Direction.south;

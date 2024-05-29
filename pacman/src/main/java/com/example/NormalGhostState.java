@@ -2,12 +2,18 @@ package com.example;
 
 import java.util.Random;
 
+/**
+ * The behavior for a ghost when it has not been eaten and the game is not in powerup state.
+ */
 public class NormalGhostState implements GhostState {
     private Ruleset ruleset;
     private SearchAlgorithm bfs;
     private Random numberGenerator;
     private boolean veryAngry;
 
+    /**
+     * Sets up the state for ghost, according to the normal state.
+     */
     public NormalGhostState(Ruleset ruleset) {
         this.ruleset = ruleset;
         this.bfs = new BreadthFirstSearch(ruleset,hasCollision());
@@ -15,37 +21,46 @@ public class NormalGhostState implements GhostState {
         this.veryAngry = true;
     }
 
+    /**
+     * Answers whether ghost can be eaten.
+     * @return Always false
+     */
     public boolean canBeEaten() {
-        /**
-         * Always returns false.
-         */
         return false;
     }
 
+    /**
+     * Answers whether ghost has collision.
+     * @return Always true
+     */
     public boolean hasCollision() {
-        /**
-         * Always returns true.
-         */
         return true;
     }
 
-    public Direction nextDirection(int posX, int posY, int goalX, int goalY, int homeX, int homeY, int intelligence,
+    /**
+     * Tries to go towards the player, with a 4/intelligence chance to pick a random direction.
+     * @param posX Current x-value position.
+     * @param posY Current y-value position.
+     * @param playerX To x-value position.
+     * @param playerY To y-value position.
+     * @param homeX X-value position for home.
+     * @param homeY Y-value position for home.
+     * @param intelligence Value of intelligence for ghost.
+     * @return The calculated next direction for the ghost to move.
+     */
+    public Direction nextDirection(int posX, int posY, int playerX, int playerY, int homeX, int homeY, int intelligence,
                                    Direction currentDirection) {
-        /**
-         * Calculates the next direction for the ghost to move.
-         * Tries to go towards the player, with a 4/intelligence chance to pick a random direction.
-         */
         if (veryAngry) {
-            return initialDirection(posX, posY, goalX, goalY, intelligence);
+            return initialDirection(posX, posY, playerX, playerY, intelligence);
         } else {
-            return consecutiveDirection(posX, posY, goalX, goalY, intelligence, currentDirection);
+            return consecutiveDirection(posX, posY, playerX, playerY, intelligence, currentDirection);
         }
     }
 
-    private Direction initialDirection(int posX, int posY, int goalX, int goalY, int intelligence) {
-        /*
-         * Returns the direction that is directly towards the player with a 4/intelligence chance to pick randomly.
-         */
+    /*
+     * Returns the direction that is directly towards the player with a 4/intelligence chance to pick randomly.
+     */
+    private Direction initialDirection(int posX, int posY, int playerX, int playerY, int intelligence) {
         Direction direction = null;
         switch(numberGenerator.nextInt(intelligence)) {
             case 0:
@@ -61,23 +76,22 @@ public class NormalGhostState implements GhostState {
                 direction = Direction.south;
                 break;
             default:
-                direction = bfs.search(posX, posY, goalX, goalY);
+                direction = bfs.search(posX, posY, playerX, playerY);
                 break;
         }
         if (ruleset.nextPosition(posX, posY, direction, hasCollision()) == null) {
-            return initialDirection(posX, posY, goalX, goalY, intelligence);
+            return initialDirection(posX, posY, playerX, playerY, intelligence);
         } else {
             veryAngry = false;
             return direction;
         }
     }
 
-    public Direction consecutiveDirection(int posX, int posY, int goalX, int goalY, int intelligence, Direction currentDirection) {
-        /*
-         * Returns the direction that is directly towards the player with a 4/intelligence chance to pick randomly.
-         * Will never return a direction that is a 180 degree turn from the previous direction.
-         */
-
+    /*
+     * Returns the direction that is directly towards the player with a 4/intelligence chance to pick randomly.
+     * Will never return a direction that is a 180 degree turn from the previous direction.
+     */
+    private Direction consecutiveDirection(int posX, int posY, int playerX, int playerY, int intelligence, Direction currentDirection) {
         Direction direction = null;
         switch(numberGenerator.nextInt(intelligence)) {
             case 0:
@@ -93,24 +107,24 @@ public class NormalGhostState implements GhostState {
                 direction = Direction.south;
                 break;
             default:
-                direction = bfs.search(posX, posY, goalX, goalY);
+                direction = bfs.search(posX, posY, playerX, playerY);
                 break;
         }
 
         if (ruleset.nextPosition(posX, posY, direction, hasCollision()) == null) {
-            return consecutiveDirection(posX, posY, goalX, goalY, intelligence, currentDirection);
+            return consecutiveDirection(posX, posY, playerX, playerY, intelligence, currentDirection);
         } else if (is180(currentDirection, direction)) {
-            return consecutiveDirection(posX, posY, goalX, goalY, intelligence, currentDirection);
+            return consecutiveDirection(posX, posY, playerX, playerY, intelligence, currentDirection);
         } 
         else {
             return direction;
         }
     }
 
-    private boolean is180(Direction oldDir, Direction newDir) {
-        /*
-         * Checks whether two direction are opposite of eachother.
-         */
+    /*
+     * Checks whether two direction are opposite of eachother.
+     */
+    private boolean is180(Direction oldDir, Direction newDir) { 
         switch(oldDir) {
            case north:
                return newDir == Direction.south;
