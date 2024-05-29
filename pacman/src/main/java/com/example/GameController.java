@@ -21,7 +21,7 @@ public class GameController {
     public GameController() {
         this.game = new Game("map.txt");
         this.display = new Display(this.game);
-        this.desiredDirection = Direction.north;
+        this.desiredDirection = Direction.west;
 
         resetButton = new Button("Reset game");
         resetButton.setLayoutX(238);

@@ -87,10 +87,6 @@ public class Grid {
         return charMap;
     }
 
-    public Entity[][] getMap() {
-        return this.map;
-    }
-
     public void setEntity(int x, int y, Entity entity) {
         map[y][x] = Entity.empty;
     }

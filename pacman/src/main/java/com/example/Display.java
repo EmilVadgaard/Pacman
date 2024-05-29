@@ -58,11 +58,11 @@ public class Display {
 
     private void addWalls(){
         Grid grid = game.getGrid();
-        int[][] wallTypes = new int[grid.getMap().length][grid.getMap()[0].length];
-        for (int y = 0; y < grid.getMap().length; y++){
-            for (int x = 0; x < grid.getMap()[0].length; x++){
+        int[][] wallTypes = new int[grid.getLengthY()][grid.getLengthX()];
+        for (int y = 0; y < grid.getLengthY(); y++){
+            for (int x = 0; x < grid.getLengthX(); x++){
                 if (grid.getEntity(x, y) == Entity.wall){
-                    wallTypes[y][x] = calculateWallType(x, y, grid.getMap());
+                    wallTypes[y][x] = calculateWallType(x, y, grid);
                 } else if (grid.getEntity(x, y) == Entity.door) {
                     wallTypes[y][x] = -1;
                 } else {
@@ -73,13 +73,13 @@ public class Display {
         this.wallTypes = wallTypes;
     }
 
-    private int calculateWallType(int x, int y, Entity[][] map) {
+    private int calculateWallType(int x, int y, Grid grid) {
         int wallType = 0;
         int multiplier = 1;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if (y+i >= 0 && y+i < map.length && x+j >= 0 && x+j < map[0].length) {
-                    if (map[y+i][x+j] == Entity.wall) {
+                if (y+i >= 0 && y+i < grid.getLengthY() && x+j >= 0 && x+j < grid.getLengthX()) {
+                    if (grid.getEntity(x+j, y+i) == Entity.wall) {
                         wallType += multiplier;
                     }
                 }
@@ -154,8 +154,8 @@ public class Display {
 
     private void updatePellets() {
         Grid grid = game.getGrid();
-        for (int y = 0; y < grid.getMap().length; y++){
-            for (int x = 0; x < grid.getMap()[0].length; x++){
+        for (int y = 0; y < grid.getLengthY(); y++){
+            for (int x = 0; x < grid.getLengthX(); x++){
                 if (grid.getEntity(x, y) == Entity.pellet){
                     collection.getEntitySprite(gc, "pellet", 0, x+gameOffsetx,y+gameOffsety, factor);
                 } else if (grid.getEntity(x, y) == Entity.bigPellet) {
