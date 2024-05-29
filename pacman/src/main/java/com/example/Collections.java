@@ -6,7 +6,7 @@ import java.util.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Collections {
+public class Collections implements SpriteCollections{
     private Image spriteSheet;
     private Map<String, Map<Direction, Sprite[]>> characterCollection;
     private Map<Direction, Sprite[]> pacman;

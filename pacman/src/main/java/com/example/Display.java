@@ -11,7 +11,7 @@ import javafx.scene.paint.Color; //Baggrund farve
 
 public class Display {
     Image sheet = new Image(getClass().getResource("/sprite-sheet.png").toString());
-    Collections collection = new Collections(sheet);
+    SpriteCollections collection = new Collections(sheet);
     int ghostFrame;
     int playerFrame;
     int offset = 0;
