@@ -101,7 +101,8 @@ public class NormalGhostState implements GhostState {
             return consecutiveDirection(posX, posY, goalX, goalY, intelligence, currentDirection);
         } else if (is180(currentDirection, direction)) {
             return consecutiveDirection(posX, posY, goalX, goalY, intelligence, currentDirection);
-        } else {
+        } 
+        else {
             return direction;
         }
     }
@@ -123,5 +124,4 @@ public class NormalGhostState implements GhostState {
                return false;
         }
    }
-    
 }

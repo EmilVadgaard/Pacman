@@ -6,6 +6,6 @@ public class Player extends Character {
         this.posX = posX;
         this.posY = posY;
         this.speed = speed;
-        this.currentDirection = Direction.north;
+        this.currentDirection = Direction.west;
     }
 }

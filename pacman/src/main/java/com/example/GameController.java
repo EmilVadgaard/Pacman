@@ -37,85 +37,109 @@ public class GameController {
     }
 
     public void run(){
+        Timer spawnTimer = new Timer(120);
         Timer playerMoveTimer = new Timer(game.getPlayer().getSpeed());
-        Timer ghostMoveTimer = new Timer(game.getGhosts().get(0).getSpeed());
-        Timer characterAnimationTimer = new Timer(12);
-        Timer ghostWakeTimer = new Timer(300);
-        Timer powerUpTimer = new Timer(2000);
+        Timer characterAnimationTimer = new Timer(5);
+        Timer ghostWakeTimer = new Timer(180);
+        Timer powerUpTimer = new Timer(600);
         ArrayList<Timer> timers = new ArrayList<Timer>();
         timers.add(playerMoveTimer);
-        timers.add(ghostMoveTimer);
+        for (Ghost ghost: game.getGhosts()) {
+            timers.add(new Timer(ghost.getSpeed()));
+        }
+        //timers.add(ghostMoveTimer);
         timers.add(characterAnimationTimer);
         timers.add(ghostWakeTimer);
         timers.add(powerUpTimer);
         new AnimationTimer(){
             public void handle(long currentNanoTime){
-                for (Timer t : timers) {
-                    t.decrementTime();
-                }
-                display.setOffset(playerMoveTimer.getTime());
-
-                // Player movement events
-                if (playerMoveTimer.getTime() == 0) {
-                    if (game.isLegal(game.getPlayer(), desiredDirection)) {
-                        game.switchDirection(game.getPlayer(), desiredDirection);
-                    }
-                    if (game.isLegal(game.getPlayer(), game.getCharacterDirection(game.getPlayer()))) {
-                        game.moveCharacter(game.getPlayer());
-                    }
-                    for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(ghost, game.getPlayer())) {
-                            game.handleCollision(ghost, game.getPlayer());
-                        }
-                    }
-                    if (game.isEatable(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
-                        if (game.isBigPellet(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
-                            powerUpTimer.reset();
-                            // TYPECASTING !!!!!!!!!!!!!!!!!!
-                            ghostMoveTimer.setTime((int)(game.getGhosts().get(0).getSpeed()*1.25));
-                        }
-                        game.eat(game.getPlayer().getPosX(), game.getPlayer().getPosY());
-                    }
-                    playerMoveTimer.reset();
-                }
-
-                // Ghost movement events
-                if (ghostMoveTimer.getTime() == 0) {
-                    game.moveGhosts();
-                    for (Ghost ghost: game.getGhosts()) {
-                        if (game.characterCollision(ghost, game.getPlayer())) {
-                            game.handleCollision(ghost, game.getPlayer());
-                        }
-                    }
-                    ghostMoveTimer.reset();
-                }
-
-                // Reset ghosts after a powerup has finished
-                if (powerUpTimer.getTime() == 0) {
-                    game.endPowerUpTime();
-                    ghostMoveTimer.setTime(game.getGhosts().get(0).getSpeed());
-                }
-
-                // Character animation handling
-                if (characterAnimationTimer.getTime() == 0) {
-                    display.incrementFrames();
-                    characterAnimationTimer.reset();
-                }
                 display.update();
+                // Timer so game does not start instantly
+                if (!game.playerIsSpawned()) {
+                    spawnTimer.decrementTime();
+                    ghostWakeTimer.decrementTime();
+                    if (spawnTimer.getTime() == 0) {
+                        game.spawnPlayer();
+                    } else {
+                        display.showReady();
+                    }
+                } else {
+                    for (Timer t : timers) {
+                        t.decrementTime();
+                    }
+                    // Player movement events
+                    if (playerMoveTimer.getTime() == 0) {
+                        if (game.isLegal(game.getPlayer(), desiredDirection)) {
+                            game.switchDirection(game.getPlayer(), desiredDirection);
+                        }
+                        if (game.isLegal(game.getPlayer(), game.getCharacterDirection(game.getPlayer()))) {
+                            game.moveCharacter(game.getPlayer());
+                        }
+                        for (Ghost ghost: game.getGhosts()) {
+                            if (game.characterCollision(ghost, game.getPlayer())) {
+                                game.handleCollision(ghost, game.getPlayer());
+                            }
+                        }
+                        if (game.isEatable(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
+                            if (game.isBigPellet(game.getPlayer().getPosX(), game.getPlayer().getPosY())) {
+                                powerUpTimer.reset();
+                                display.setPowerupRunningOut(false);
+                            }
+                            game.eat(game.getPlayer().getPosX(), game.getPlayer().getPosY());
+                        }
+                        playerMoveTimer.reset();
+                    }
 
-                if (ghostWakeTimer.getTime() == 0) {
-                    game.wakeNextGhost();
-                    ghostWakeTimer.reset();
+                    // Ghost movement events
+                    int count = 1;
+                    for (Ghost ghost: game.getGhosts()) {
+                        if (timers.get(count).getTime() == 0) {
+                            game.moveGhost(ghost);
+                            timers.get(count).reset();
+                        }
+                        timers.get(count).setTime(ghost.getSpeed());
+                        count++;
+                        if (game.characterCollision(ghost, game.getPlayer())) {
+                            game.handleCollision(ghost, game.getPlayer());
+                        }
+                    }
+
+                    // Reset ghosts after a powerup has finished
+                    if (powerUpTimer.getTime() <= 180) {
+                        display.setPowerupRunningOut(true);
+                    }
+                    if (powerUpTimer.getTime() <= 0) {
+                        game.endPowerUpTime();
+                        display.setPowerupRunningOut(false);
+                    }
+
+                    // Character animation handling
+                    if (characterAnimationTimer.getTime() == 0) {
+                        display.incrementFrames();
+                        characterAnimationTimer.reset();
+                    }
+
+                    if (ghostWakeTimer.getTime() <= 0) {
+                        game.wakeNextGhost();
+                        ghostWakeTimer.reset();
+                    }
+
+                    if (!game.playerIsSpawned()) {
+                        spawnTimer.reset();
+                    }
+
+                    if (game.isGameOver()){
+                        stop();
+                        if (game.getLifeCounter() < 0) {
+                            display.showResetMenu("Game Over.");
+                        } else {
+                            display.showResetMenu("YOU WIN!");
+                        }
+                        resetButton.setVisible(true);
+                        resetButton.setDisable(false);
+                    }
                 }
-                if (!game.hasSleepingGhosts()) {
-                    ghostWakeTimer.reset();
-                }
-                if (game.isGameOver()){
-                    stop();
-                    display.showResetMenu();
-                    resetButton.setVisible(true);
-                    resetButton.setDisable(false);
-                }
+
             }
             
         }.start();
@@ -129,27 +153,15 @@ public class GameController {
         switch(event.getCode()){
             case UP:
                 this.desiredDirection = Direction.north;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }
                 break;
             case DOWN:
-                this.desiredDirection = Direction.south;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }                
+                this.desiredDirection = Direction.south;  
                 break;
             case RIGHT:
-                this.desiredDirection = Direction.east;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }                
+                this.desiredDirection = Direction.east;     
                 break;
             case LEFT:
                 this.desiredDirection = Direction.west;
-                // if (game.isLegal(game.getPlayer(), desiredDirection) && desiredDirection != game.getPlayer().getDirection()) {
-                //     playerMoveTimer.reset();
-                // }
                 break;
             default:
                 break;
@@ -157,12 +169,10 @@ public class GameController {
     }
 
     public void processResetButton (ActionEvent event){
-        //if(event.getSource() == resetButton){
-            resetButton.setDisable(true);
-            resetButton.setVisible(false);
-            game.resetGame("map.txt");
-            run();
-        //}
+        resetButton.setDisable(true);
+        resetButton.setVisible(false);
+        game.resetGame("map.txt");
+        run();
     }
 
     public Button getResetButton(){
