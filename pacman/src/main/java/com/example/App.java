@@ -32,12 +32,11 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         GameController gameController = new GameController();
-        /*GridPane*/
+        
         root = new Group();
         display = gameController.getDisplay();
         
         root.getChildren().addAll(display.getCanvas(), gameController.getResetButton());
-
 
         Scene scene = new Scene(root, 600, 650, Color.BLACK);
 
@@ -48,6 +47,8 @@ public class App extends Application {
         stage.show();
         
         scene.setOnKeyPressed(gameController::handleKeyPress);
+
+        gameController.run();
     }
 
     public static void main(String[] args) {

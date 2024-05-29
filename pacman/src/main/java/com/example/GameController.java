@@ -32,8 +32,6 @@ public class GameController {
         Font buttonFont = Font.font("Courier New", FontWeight.BOLD, 17);
         resetButton.setFont(buttonFont);
         resetButton.setOnAction(this::processResetButton);
-
-        run();
     }
 
     public void run(){
@@ -51,9 +49,9 @@ public class GameController {
         timers.add(characterAnimationTimer);
         timers.add(ghostWakeTimer);
         timers.add(powerUpTimer);
+        display.update();
         new AnimationTimer(){
             public void handle(long currentNanoTime){
-                display.update();
                 // Timer so game does not start instantly
                 if (!game.playerIsSpawned()) {
                     spawnTimer.decrementTime();
@@ -137,16 +135,13 @@ public class GameController {
                         }
                         resetButton.setVisible(true);
                         resetButton.setDisable(false);
+                    } else {
+                        display.update();
                     }
                 }
-
             }
             
         }.start();
-    }
-
-    public Display getDisplay() {
-        return this.display;
     }
 
     public void handleKeyPress(KeyEvent event) {
@@ -166,6 +161,10 @@ public class GameController {
             default:
                 break;
         }
+    }
+
+    public Display getDisplay() {
+        return this.display;
     }
 
     public void processResetButton (ActionEvent event){
