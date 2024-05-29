@@ -17,6 +17,10 @@ public class App extends Application {
 
 
     @Override
+    /**
+     * Starts the game
+     * @param stage The stage of the game.
+     */
     public void start(Stage stage) {
         GameController gameController = new GameController();
         
@@ -38,6 +42,9 @@ public class App extends Application {
         gameController.run();
     }
 
+    /**
+     * Launches the game.
+     */
     public static void main(String[] args) {
         launch();
     }

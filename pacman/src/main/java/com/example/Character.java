@@ -31,6 +31,7 @@ public abstract class Character {
 
     /**
     * Changes the current direction to the desired direction.
+    * @param desiredDirection Desired direction.
     */
     public void switchDirection(Direction desiredDirection){
         this.currentDirection = desiredDirection;
@@ -64,6 +65,8 @@ public abstract class Character {
 
     /**
     * Sets the X and Y coordinates.
+    * @param x X-value position.
+    * @param y Y-value position.
     */
     public void setPos(int x, int y) {
         this.posX = x;
@@ -79,6 +82,7 @@ public abstract class Character {
 
     /**
     * Sets the speed.
+    * @param speed
     */
     public void setSpeed(int speed) {
         this.speed = speed;

@@ -301,7 +301,6 @@ public class Collections implements SpriteCollections{
      */
     public void drawEntitySprite(GraphicsContext gc, String group, int type, int x, int y, int factor){
         Sprite sprite = entityCollection.get(group).get(type);
-
         if (sprite != null){    
             gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], (x*factor), (y*factor), factor, factor);
         }        
@@ -319,7 +318,6 @@ public class Collections implements SpriteCollections{
      */
     public void drawCharacterSprite(GraphicsContext gc, String group, Direction type, int frame, int x, int y, int factor){
         Sprite sprite = characterCollection.get(group).get(type)[frame];
-        
         if (sprite != null){    
             gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], (x*factor)-2, (y*factor)-2, factor+4, factor+4);
         }
@@ -345,14 +343,14 @@ public class Collections implements SpriteCollections{
     /**
      * Draws the related entity sprite to given GraphicsContext based on inputed keys, type, screen position and size.
      * @param gc GraphicsContext that is being drawn on.
-     * @param group specifies which character the desired sprite is.
-     * @param type the type of the desired sprite. 
-     * @param factor sets the size of the sprite. Note it should correspond to factor size of display.
+     * @param group Specifies which character the desired sprite is.
+     * @param type The type of the desired sprite. 
+     * @param x X-value position.
+     * @param y Y-value position.
+     * @param size Size of the sprite.
      */
     public void drawSprite(GraphicsContext gc, String group, int type, int x, int y, int size){
         Sprite sprite = entityCollection.get(group).get(type);
-        
-        
         if (sprite != null){    
             gc.drawImage(spriteSheet, sprite.get()[0], sprite.get()[1], sprite.get()[2], sprite.get()[2], x, y, size, size);
         }

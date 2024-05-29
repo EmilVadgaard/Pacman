@@ -22,6 +22,10 @@ public class BreadthFirstSearch implements SearchAlgorithm{
 
     /**
      * Finds the initial direction of the optimal path from the start position to the goal position.
+     * @param startX Current x-value position.
+     * @param startY Current y-value position.
+     * @param goalX To y-value position.
+     * @param goalY To y-value position.
      */
     public Direction search(int startX, int startY, int goalX, int goalY) {
         Node node = new Node(startX, startY, null);
