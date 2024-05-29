@@ -7,6 +7,24 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class Collections implements SpriteCollections{
+
+    private class Sprite {
+        int x;
+        int y;
+        int size;
+    
+        public Sprite(int x, int y, int size){
+            this.x = x;
+            this.y = y;
+            this.size = size;
+        }
+    
+        public int[] get(){
+            int[] res = {x,y, size};
+            return res;
+        }
+    }
+
     private Image spriteSheet;
     private Map<String, Map<Direction, Sprite[]>> characterCollection;
     private Map<Direction, Sprite[]> pacman;
